@@ -1,0 +1,70 @@
+.solver-controls {
+    display: grid;
+    grid-template-columns: minmax(180px, 1fr) auto;
+    gap: 1rem;
+    align-items: end;
+    max-width: 620px;
+}
+
+.result-summary {
+    display: flex;
+    gap: .5rem;
+    flex-wrap: wrap;
+    margin: 1.5rem 0 1rem;
+    padding: 1rem;
+    border-radius: .75rem;
+    background: #e8f5f6;
+    color: #075e66;
+}
+
+.movement-list {
+    max-height: 430px;
+    border: 1px solid #dce5ef;
+    border-radius: .75rem;
+}
+
+.movement-list thead {
+    position: sticky;
+    top: 0;
+    z-index: 1;
+}
+
+.disk-chip {
+    display: inline-grid;
+    min-width: 2rem;
+    height: 2rem;
+    place-items: center;
+    border-radius: 999px;
+    background: #123a62;
+    color: white;
+    font-weight: 800;
+}
+
+.explanation-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    gap: 1rem;
+}
+
+.explanation-grid > div {
+    padding: 1rem;
+    border: 1px solid #dce5ef;
+    border-radius: .75rem;
+    background: #f8fafc;
+}
+
+.explanation-grid h3 {
+    margin-bottom: .5rem;
+    color: #087f8c;
+    font-size: 1rem;
+    font-weight: 800;
+}
+
+.explanation-grid p {
+    margin: 0;
+}
+
+@media (max-width: 600px) {
+    .solver-controls { grid-template-columns: 1fr; }
+    .solver-controls .btn { width: 100%; }
+}
