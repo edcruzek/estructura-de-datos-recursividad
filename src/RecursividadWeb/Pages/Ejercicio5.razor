@@ -1,5 +1,6 @@
 @page "/ejercicio-5"
 @using RecursividadWeb.Algorithms
+@implements IDisposable
 
 <PageTitle>Ejercicio 5 · Torres de Hanói</PageTitle>
 
@@ -8,13 +9,13 @@
         <span class="exercise-badge">Ejercicio 5</span>
         <h1>Torres de Hanói</h1>
         <p>
-            Indica cuántos discos tiene la torre para obtener, en orden, todos los movimientos
-            necesarios desde Origen hasta Destino.
+            Observa cómo la recursividad traslada cada disco desde Origen hasta Destino
+            sin colocar nunca un disco grande sobre uno pequeño.
         </p>
     </header>
 
     <section class="exercise-section" aria-labelledby="solver-title">
-        <h2 id="solver-title">Resolver el rompecabezas</h2>
+        <h2 id="solver-title">Configura el rompecabezas</h2>
 
         <div class="solver-controls">
             <div>
@@ -23,24 +24,110 @@
                              class="form-control"
                              @bind-Value="numeroDiscos"
                              min="1"
-                             max="@Ejercicio5Algorithm.MaximoDiscos" />
-                <div class="form-text">Valores permitidos: 1 a @Ejercicio5Algorithm.MaximoDiscos.</div>
+                             max="@MaximoDiscosVisual" />
+                <div class="form-text">El modo visual admite de 1 a @MaximoDiscosVisual discos.</div>
             </div>
-            <button class="btn btn-primary" type="button" @onclick="Resolver">Generar movimientos</button>
+            <div>
+                <label for="speed" class="form-label">Velocidad</label>
+                <select id="speed" class="form-select" @bind="velocidad">
+                    <option value="1200">Lenta</option>
+                    <option value="700">Normal</option>
+                    <option value="350">Rápida</option>
+                </select>
+            </div>
+            <button class="btn btn-primary" type="button" @onclick="Resolver">Generar</button>
         </div>
 
         @if (!string.IsNullOrWhiteSpace(error))
         {
             <div class="alert alert-danger mt-3" role="alert">@error</div>
         }
+    </section>
 
-        @if (movimientos is not null)
-        {
-            <div class="result-summary" role="status">
-                <strong>@movimientos.Count movimientos</strong>
-                <span>para trasladar @numeroDiscos discos de Origen a Destino.</span>
+    @if (movimientos is not null)
+    {
+        var torres = ConstruirTorres();
+        var movimientoActual = MovimientoActual;
+        var siguienteMovimiento = SiguienteMovimiento;
+
+        <section class="visualizer" aria-labelledby="visualizer-title">
+            <div class="visualizer-heading">
+                <div>
+                    <span class="visualizer-kicker">Mapa visual</span>
+                    <h2 id="visualizer-title">@(pasoActual == 0 ? "Estado inicial" : $"Movimiento {pasoActual} de {movimientos.Count}")</h2>
+                </div>
+                <span class="movement-counter">@pasoActual / @movimientos.Count</span>
             </div>
 
+            <div class="movement-message" role="status" aria-live="polite">
+                @if (movimientoActual is not null)
+                {
+                    <span class="movement-disk">Disco @movimientoActual.Disco</span>
+                    <strong>@movimientoActual.Desde <span aria-hidden="true">→</span> @movimientoActual.Hacia</strong>
+                }
+                else
+                {
+                    <strong>Todos los discos comienzan en la torre Origen.</strong>
+                }
+            </div>
+
+            <div class="hanoi-board" aria-label="Estado actual de las Torres de Hanói">
+                @foreach (var nombre in NombresTorres)
+                {
+                    <div class="@ClaseTorre(nombre)">
+                        <div class="tower-stage">
+                            <div class="tower-pole" aria-hidden="true"></div>
+                            <div class="tower-disks">
+                                @foreach (var disco in torres[nombre])
+                                {
+                                    <div class="hanoi-disk @(movimientoActual?.Disco == disco ? "last-moved" : null)"
+                                         style="@EstiloDisco(disco)"
+                                         title="Disco @disco">
+                                        <span>@disco</span>
+                                    </div>
+                                }
+                            </div>
+                        </div>
+                        <div class="tower-label">
+                            <strong>@LetraTorre(nombre)</strong>
+                            <span>@nombre</span>
+                        </div>
+                    </div>
+                }
+            </div>
+
+            <progress class="movement-progress" value="@pasoActual" max="@movimientos.Count">
+                @pasoActual de @movimientos.Count
+            </progress>
+
+            <div class="playback-controls" aria-label="Controles de la animación">
+                <button class="btn btn-outline-secondary" type="button" @onclick="IrAlInicio" disabled="@(pasoActual == 0)">⏮ Inicio</button>
+                <button class="btn btn-outline-secondary" type="button" @onclick="Anterior" disabled="@(pasoActual == 0)">← Anterior</button>
+                <button class="btn btn-primary play-button" type="button" @onclick="AlternarReproduccion">
+                    @(isReproduciendo ? "⏸ Pausar" : "▶ Reproducir")
+                </button>
+                <button class="btn btn-outline-secondary" type="button" @onclick="Siguiente" disabled="@(pasoActual >= movimientos.Count)">Siguiente →</button>
+                <button class="btn btn-outline-secondary" type="button" @onclick="IrAlFinal" disabled="@(pasoActual >= movimientos.Count)">Final ⏭</button>
+            </div>
+
+            <div class="next-movement">
+                @if (siguienteMovimiento is not null)
+                {
+                    <span>Siguiente:</span>
+                    <strong>disco @siguienteMovimiento.Disco, @siguienteMovimiento.Desde → @siguienteMovimiento.Hacia</strong>
+                }
+                else
+                {
+                    <strong>¡Torre completada!</strong>
+                }
+            </div>
+        </section>
+
+        <section class="exercise-section" aria-labelledby="moves-title">
+            <div class="section-heading-row">
+                <h2 id="moves-title">Secuencia de movimientos</h2>
+                <span>@movimientos.Count movimientos en total</span>
+            </div>
             <div class="table-responsive movement-list">
                 <table class="table table-striped table-hover align-middle">
                     <thead>
@@ -53,7 +140,8 @@
                     <tbody>
                         @foreach (var movimiento in movimientos)
                         {
-                            <tr>
+                            <tr class="@(movimiento.Numero == pasoActual ? "current-row" : null)"
+                                aria-current="@(movimiento.Numero == pasoActual ? "step" : null)">
                                 <td>@movimiento.Numero</td>
                                 <td><span class="disk-chip">@movimiento.Disco</span></td>
                                 <td>@movimiento.Desde <span aria-hidden="true">→</span> @movimiento.Hacia</td>
@@ -62,44 +150,88 @@
                     </tbody>
                 </table>
             </div>
-        }
-    </section>
+        </section>
+
+        <section class="exercise-section recursion-section" aria-labelledby="recursion-title">
+            <details>
+                <summary id="recursion-title">Ver árbol de llamadas recursivas</summary>
+                <p>
+                    Cada llamada divide el problema en mover <em>n − 1</em> discos, trasladar el disco mayor
+                    y volver a mover <em>n − 1</em> discos. El movimiento actual se resalta en azul.
+                </p>
+                <div class="recursion-tree">
+                    @foreach (var linea in lineasRecursion)
+                    {
+                        <div class="recursion-line @(linea.Movimiento == pasoActual ? "active" : null) @(linea.Movimiento is null ? "call" : "move")"
+                             style="padding-left: @(linea.Nivel * 1.15)rem">
+                            <span aria-hidden="true">@(linea.Movimiento is null ? "↳" : "•")</span>
+                            <code>@linea.Texto</code>
+                        </div>
+                    }
+                </div>
+            </details>
+        </section>
+    }
 
     <section class="exercise-section how-it-works" aria-labelledby="explanation-title">
         <h2 id="explanation-title">¿Cómo funciona?</h2>
         <div class="explanation-grid">
             <div>
+                <span class="explanation-number">1</span>
                 <h3>Entrada</h3>
-                <p>El usuario introduce de 1 a @Ejercicio5Algorithm.MaximoDiscos discos. El límite evita generar una lista demasiado grande en el navegador.</p>
+                <p>El usuario elige de 1 a @MaximoDiscosVisual discos y la velocidad de reproducción.</p>
             </div>
             <div>
+                <span class="explanation-number">2</span>
                 <h3>Caso base</h3>
-                <p>Si queda un solo disco, se mueve directamente de la torre de origen a la de destino.</p>
+                <p>Si queda un disco, se mueve directamente de la torre de origen a la de destino.</p>
             </div>
             <div>
+                <span class="explanation-number">3</span>
                 <h3>Paso recursivo</h3>
-                <p>Con varios discos, primero se mueven los superiores a la torre auxiliar, luego el disco mayor al destino y finalmente los superiores sobre él.</p>
+                <p>Se mueven <em>n − 1</em> discos al auxiliar, el disco mayor al destino y los <em>n − 1</em> restantes sobre él.</p>
             </div>
             <div>
+                <span class="explanation-number">4</span>
                 <h3>Resultado</h3>
-                <p>La aplicación presenta cada movimiento en orden. Para <em>n</em> discos se necesitan exactamente 2<sup>n</sup> − 1 movimientos.</p>
+                <p>El tablero y la tabla muestran los 2<sup>n</sup> − 1 movimientos en el orden correcto.</p>
             </div>
             <div>
+                <span class="explanation-number">5</span>
                 <h3>Ejemplo</h3>
-                <p>Con 2 discos: disco 1 a Auxiliar, disco 2 a Destino y disco 1 de Auxiliar a Destino; en total, 3 movimientos.</p>
+                <p>Con 3 discos se generan 7 movimientos. Usa los controles para observarlos uno por uno.</p>
             </div>
         </div>
     </section>
 </article>
 
 @code {
+    private const int MaximoDiscosVisual = 8;
+    private static readonly string[] NombresTorres = ["Origen", "Auxiliar", "Destino"];
+
     private int? numeroDiscos = 3;
+    private int velocidad = 700;
+    private int pasoActual;
+    private bool isReproduciendo;
     private IReadOnlyList<MovimientoHanoi>? movimientos;
+    private IReadOnlyList<LineaRecursion> lineasRecursion = [];
     private string? error;
+    private CancellationTokenSource? reproduccion;
+
+    private MovimientoHanoi? MovimientoActual =>
+        movimientos is not null && pasoActual > 0 ? movimientos[pasoActual - 1] : null;
+
+    private MovimientoHanoi? SiguienteMovimiento =>
+        movimientos is not null && pasoActual < movimientos.Count ? movimientos[pasoActual] : null;
+
+    protected override void OnInitialized() => Resolver();
 
     private void Resolver()
     {
+        DetenerReproduccion();
         movimientos = null;
+        lineasRecursion = [];
+        pasoActual = 0;
         error = null;
 
         if (numeroDiscos is null)
@@ -108,13 +240,168 @@
             return;
         }
 
+        if (numeroDiscos < 1 || numeroDiscos > MaximoDiscosVisual)
+        {
+            error = $"Para el mapa visual, el número de discos debe estar entre 1 y {MaximoDiscosVisual}.";
+            return;
+        }
+
+        movimientos = Ejercicio5Algorithm.Resolver(numeroDiscos.Value);
+        lineasRecursion = ConstruirArbol(numeroDiscos.Value);
+    }
+
+    private Dictionary<string, List<int>> ConstruirTorres()
+    {
+        var torres = NombresTorres.ToDictionary(nombre => nombre, _ => new List<int>());
+
+        if (numeroDiscos is null || movimientos is null)
+        {
+            return torres;
+        }
+
+        for (var disco = numeroDiscos.Value; disco >= 1; disco--)
+        {
+            torres["Origen"].Add(disco);
+        }
+
+        for (var indice = 0; indice < pasoActual; indice++)
+        {
+            var movimiento = movimientos[indice];
+            var disco = torres[movimiento.Desde][^1];
+            torres[movimiento.Desde].RemoveAt(torres[movimiento.Desde].Count - 1);
+            torres[movimiento.Hacia].Add(disco);
+        }
+
+        return torres;
+    }
+
+    private string ClaseTorre(string nombre)
+    {
+        var clases = "tower";
+        if (MovimientoActual?.Desde == nombre) clases += " source";
+        if (MovimientoActual?.Hacia == nombre) clases += " destination";
+        return clases;
+    }
+
+    private string EstiloDisco(int disco)
+    {
+        var porcentaje = 34 + (disco * 62d / numeroDiscos!.Value);
+        var tono = (disco * 47) % 360;
+        return $"width:{porcentaje:F0}%;--disk-hue:{tono}";
+    }
+
+    private static string LetraTorre(string nombre) => nombre[0].ToString();
+
+    private void IrAlInicio()
+    {
+        DetenerReproduccion();
+        pasoActual = 0;
+    }
+
+    private void Anterior()
+    {
+        DetenerReproduccion();
+        pasoActual = Math.Max(0, pasoActual - 1);
+    }
+
+    private void Siguiente()
+    {
+        DetenerReproduccion();
+        if (movimientos is not null) pasoActual = Math.Min(movimientos.Count, pasoActual + 1);
+    }
+
+    private void IrAlFinal()
+    {
+        DetenerReproduccion();
+        if (movimientos is not null) pasoActual = movimientos.Count;
+    }
+
+    private async Task AlternarReproduccion()
+    {
+        if (isReproduciendo)
+        {
+            DetenerReproduccion();
+            return;
+        }
+
+        if (movimientos is null) return;
+        if (pasoActual >= movimientos.Count) pasoActual = 0;
+
+        DetenerReproduccion();
+        var fuente = new CancellationTokenSource();
+        reproduccion = fuente;
+        isReproduciendo = true;
+
         try
         {
-            movimientos = Ejercicio5Algorithm.Resolver(numeroDiscos.Value);
+            while (pasoActual < movimientos.Count && !fuente.IsCancellationRequested)
+            {
+                await Task.Delay(velocidad, fuente.Token);
+                pasoActual++;
+                await InvokeAsync(StateHasChanged);
+            }
         }
-        catch (ArgumentOutOfRangeException exception)
+        catch (OperationCanceledException)
         {
-            error = exception.Message;
+            // La pausa cancela deliberadamente la espera actual.
+        }
+        finally
+        {
+            if (ReferenceEquals(reproduccion, fuente))
+            {
+                isReproduciendo = false;
+                reproduccion.Dispose();
+                reproduccion = null;
+                await InvokeAsync(StateHasChanged);
+            }
         }
     }
+
+    private void DetenerReproduccion()
+    {
+        isReproduciendo = false;
+        var fuente = reproduccion;
+        reproduccion = null;
+        fuente?.Cancel();
+        fuente?.Dispose();
+    }
+
+    private static IReadOnlyList<LineaRecursion> ConstruirArbol(int discos)
+    {
+        var lineas = new List<LineaRecursion>();
+        var numeroMovimiento = 0;
+        AgregarLlamada(discos, "Origen", "Auxiliar", "Destino", 0, lineas, ref numeroMovimiento);
+        return lineas;
+    }
+
+    private static void AgregarLlamada(
+        int discos,
+        string origen,
+        string auxiliar,
+        string destino,
+        int nivel,
+        List<LineaRecursion> lineas,
+        ref int numeroMovimiento)
+    {
+        lineas.Add(new LineaRecursion(nivel, $"Hanoi({discos}, {origen} → {destino}, auxiliar: {auxiliar})", null));
+
+        if (discos == 1)
+        {
+            numeroMovimiento++;
+            lineas.Add(new LineaRecursion(nivel + 1, $"Mover disco 1: {origen} → {destino}", numeroMovimiento));
+            return;
+        }
+
+        AgregarLlamada(discos - 1, origen, destino, auxiliar, nivel + 1, lineas, ref numeroMovimiento);
+        numeroMovimiento++;
+        lineas.Add(new LineaRecursion(nivel + 1, $"Mover disco {discos}: {origen} → {destino}", numeroMovimiento));
+        AgregarLlamada(discos - 1, auxiliar, origen, destino, nivel + 1, lineas, ref numeroMovimiento);
+    }
+
+    public void Dispose()
+    {
+        DetenerReproduccion();
+    }
+
+    private sealed record LineaRecursion(int Nivel, string Texto, int? Movimiento);
 }
