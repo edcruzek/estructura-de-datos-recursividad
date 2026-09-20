@@ -1,3 +1,120 @@
 @page "/ejercicio-5"
+@using RecursividadWeb.Algorithms
+
 <PageTitle>Ejercicio 5 · Torres de Hanói</PageTitle>
-<PendingExercise Number="5" Title="Torres de Hanói" Statement="Lee un número de discos y describe recursivamente los movimientos necesarios para llevar la torre del origen al destino." />
+
+<article class="exercise-workspace hanoi-page">
+    <header>
+        <span class="exercise-badge">Ejercicio 5</span>
+        <h1>Torres de Hanói</h1>
+        <p>
+            Indica cuántos discos tiene la torre para obtener, en orden, todos los movimientos
+            necesarios desde Origen hasta Destino.
+        </p>
+    </header>
+
+    <section class="exercise-section" aria-labelledby="solver-title">
+        <h2 id="solver-title">Resolver el rompecabezas</h2>
+
+        <div class="solver-controls">
+            <div>
+                <label for="disk-count" class="form-label">Número de discos</label>
+                <InputNumber id="disk-count"
+                             class="form-control"
+                             @bind-Value="numeroDiscos"
+                             min="1"
+                             max="@Ejercicio5Algorithm.MaximoDiscos" />
+                <div class="form-text">Valores permitidos: 1 a @Ejercicio5Algorithm.MaximoDiscos.</div>
+            </div>
+            <button class="btn btn-primary" type="button" @onclick="Resolver">Generar movimientos</button>
+        </div>
+
+        @if (!string.IsNullOrWhiteSpace(error))
+        {
+            <div class="alert alert-danger mt-3" role="alert">@error</div>
+        }
+
+        @if (movimientos is not null)
+        {
+            <div class="result-summary" role="status">
+                <strong>@movimientos.Count movimientos</strong>
+                <span>para trasladar @numeroDiscos discos de Origen a Destino.</span>
+            </div>
+
+            <div class="table-responsive movement-list">
+                <table class="table table-striped table-hover align-middle">
+                    <thead>
+                        <tr>
+                            <th scope="col">Paso</th>
+                            <th scope="col">Disco</th>
+                            <th scope="col">Movimiento</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var movimiento in movimientos)
+                        {
+                            <tr>
+                                <td>@movimiento.Numero</td>
+                                <td><span class="disk-chip">@movimiento.Disco</span></td>
+                                <td>@movimiento.Desde <span aria-hidden="true">→</span> @movimiento.Hacia</td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        }
+    </section>
+
+    <section class="exercise-section how-it-works" aria-labelledby="explanation-title">
+        <h2 id="explanation-title">¿Cómo funciona?</h2>
+        <div class="explanation-grid">
+            <div>
+                <h3>Entrada</h3>
+                <p>El usuario introduce de 1 a @Ejercicio5Algorithm.MaximoDiscos discos. El límite evita generar una lista demasiado grande en el navegador.</p>
+            </div>
+            <div>
+                <h3>Caso base</h3>
+                <p>Si queda un solo disco, se mueve directamente de la torre de origen a la de destino.</p>
+            </div>
+            <div>
+                <h3>Paso recursivo</h3>
+                <p>Con varios discos, primero se mueven los superiores a la torre auxiliar, luego el disco mayor al destino y finalmente los superiores sobre él.</p>
+            </div>
+            <div>
+                <h3>Resultado</h3>
+                <p>La aplicación presenta cada movimiento en orden. Para <em>n</em> discos se necesitan exactamente 2<sup>n</sup> − 1 movimientos.</p>
+            </div>
+            <div>
+                <h3>Ejemplo</h3>
+                <p>Con 2 discos: disco 1 a Auxiliar, disco 2 a Destino y disco 1 de Auxiliar a Destino; en total, 3 movimientos.</p>
+            </div>
+        </div>
+    </section>
+</article>
+
+@code {
+    private int? numeroDiscos = 3;
+    private IReadOnlyList<MovimientoHanoi>? movimientos;
+    private string? error;
+
+    private void Resolver()
+    {
+        movimientos = null;
+        error = null;
+
+        if (numeroDiscos is null)
+        {
+            error = "Escribe el número de discos.";
+            return;
+        }
+
+        try
+        {
+            movimientos = Ejercicio5Algorithm.Resolver(numeroDiscos.Value);
+        }
+        catch (ArgumentOutOfRangeException exception)
+        {
+            error = exception.Message;
+        }
+    }
+}
