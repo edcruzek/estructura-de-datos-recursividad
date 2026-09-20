@@ -1,0 +1,8 @@
+<Solution>
+  <Folder Name="/src/">
+    <Project Path="src/RecursividadWeb/RecursividadWeb.csproj" />
+  </Folder>
+  <Folder Name="/tests/">
+    <Project Path="tests/RecursividadWeb.Tests/RecursividadWeb.Tests.csproj" />
+  </Folder>
+</Solution>

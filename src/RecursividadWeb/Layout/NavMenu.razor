@@ -1,0 +1,23 @@
+<div class="top-row ps-3 navbar navbar-dark">
+    <div class="container-fluid">
+        <a class="navbar-brand" href="">Recursividad</a>
+        <button title="Abrir menú" class="navbar-toggler" @onclick="ToggleNavMenu"><span class="navbar-toggler-icon"></span></button>
+    </div>
+</div>
+
+<div class="@NavMenuCssClass nav-scrollable" @onclick="ToggleNavMenu">
+    <nav class="nav flex-column">
+        <div class="nav-item px-3"><NavLink class="nav-link" href="" Match="NavLinkMatch.All"><span class="bi bi-house-door-fill-nav-menu" aria-hidden="true"></span> Inicio</NavLink></div>
+        <div class="nav-item px-3"><NavLink class="nav-link" href="ejercicio-1"><span class="exercise-number">1</span> Factorial</NavLink></div>
+        <div class="nav-item px-3"><NavLink class="nav-link" href="ejercicio-2"><span class="exercise-number">2</span> Fibonacci</NavLink></div>
+        <div class="nav-item px-3"><NavLink class="nav-link" href="ejercicio-3"><span class="exercise-number">3</span> MCD</NavLink></div>
+        <div class="nav-item px-3"><NavLink class="nav-link" href="ejercicio-4"><span class="exercise-number">4</span> Cambio</NavLink></div>
+        <div class="nav-item px-3"><NavLink class="nav-link" href="ejercicio-5"><span class="exercise-number">5</span> Hanói</NavLink></div>
+    </nav>
+</div>
+
+@code {
+    private bool collapseNavMenu = true;
+    private string? NavMenuCssClass => collapseNavMenu ? "collapse" : null;
+    private void ToggleNavMenu() => collapseNavMenu = !collapseNavMenu;
+}

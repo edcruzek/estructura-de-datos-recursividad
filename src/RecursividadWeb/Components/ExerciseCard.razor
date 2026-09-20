@@ -1,0 +1,13 @@
+<article class="exercise-card">
+    <span class="exercise-badge">Ejercicio @Number</span>
+    <h2>@Title</h2>
+    <p>@Summary</p>
+    <a class="btn btn-outline-primary" href="@Route">Abrir ejercicio</a>
+</article>
+
+@code {
+    [Parameter, EditorRequired] public string Number { get; set; } = string.Empty;
+    [Parameter, EditorRequired] public string Title { get; set; } = string.Empty;
+    [Parameter, EditorRequired] public string Summary { get; set; } = string.Empty;
+    [Parameter, EditorRequired] public string Route { get; set; } = string.Empty;
+}

@@ -1,0 +1,24 @@
+<article class="exercise-workspace">
+    <header>
+        <span class="status-badge">Pendiente</span>
+        <h1>Ejercicio @Number: @Title</h1>
+        <p>@Statement</p>
+    </header>
+    <section class="exercise-section" aria-labelledby="implementation-title">
+        <h2 id="implementation-title">Implementación</h2>
+        <div class="pending-panel">Este espacio está reservado para la interfaz y el resultado del ejercicio.</div>
+    </section>
+    <section class="exercise-section how-it-works" aria-labelledby="explanation-title">
+        <h2 id="explanation-title">¿Cómo funciona?</h2>
+        <div class="pending-panel">
+            El agente responsable debe sustituir este mensaje por una explicación clara del caso base,
+            el paso recursivo y un ejemplo de ejecución.
+        </div>
+    </section>
+</article>
+
+@code {
+    [Parameter, EditorRequired] public int Number { get; set; }
+    [Parameter, EditorRequired] public string Title { get; set; } = string.Empty;
+    [Parameter, EditorRequired] public string Statement { get; set; } = string.Empty;
+}

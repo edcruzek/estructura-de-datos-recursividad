@@ -1,0 +1,26 @@
+name: Validar cambios
+
+on:
+  pull_request:
+  push:
+    branches: [main]
+
+permissions:
+  contents: read
+
+jobs:
+  build-and-test:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Descargar repositorio
+        uses: actions/checkout@v6
+      - name: Instalar .NET
+        uses: actions/setup-dotnet@v5
+        with:
+          dotnet-version: 10.0.x
+      - name: Restaurar dependencias
+        run: dotnet restore PracticaRecursividad.slnx
+      - name: Ejecutar pruebas
+        run: dotnet test PracticaRecursividad.slnx --no-restore --configuration Release
+      - name: Compilar sitio
+        run: dotnet publish src/RecursividadWeb/RecursividadWeb.csproj --no-restore --configuration Release
