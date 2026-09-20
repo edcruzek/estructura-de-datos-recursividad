@@ -50,4 +50,32 @@ public class Ejercicio5Tests
 
         Assert.Equal((1 << Ejercicio5Algorithm.MaximoDiscos) - 1, movimientos.Count);
     }
+
+    [Fact]
+    public void CadaMovimiento_MantieneUnTableroValidoYTerminaEnDestino()
+    {
+        const int discos = 6;
+        var movimientos = Ejercicio5Algorithm.Resolver(discos);
+        var torres = new Dictionary<string, List<int>>
+        {
+            ["Origen"] = Enumerable.Range(1, discos).Reverse().ToList(),
+            ["Auxiliar"] = [],
+            ["Destino"] = []
+        };
+
+        foreach (var movimiento in movimientos)
+        {
+            Assert.Equal(movimiento.Disco, torres[movimiento.Desde][^1]);
+
+            var destino = torres[movimiento.Hacia];
+            Assert.True(destino.Count == 0 || destino[^1] > movimiento.Disco);
+
+            torres[movimiento.Desde].RemoveAt(torres[movimiento.Desde].Count - 1);
+            destino.Add(movimiento.Disco);
+        }
+
+        Assert.Empty(torres["Origen"]);
+        Assert.Empty(torres["Auxiliar"]);
+        Assert.Equal(Enumerable.Range(1, discos).Reverse(), torres["Destino"]);
+    }
 }
