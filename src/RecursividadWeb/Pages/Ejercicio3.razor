@@ -1,3 +1,138 @@
 @page "/ejercicio-3"
+@using RecursividadWeb.Algorithms
+
 <PageTitle>Ejercicio 3 · MCD</PageTitle>
-<PendingExercise Number="3" Title="Máximo Común Divisor" Statement="Calcula el máximo común divisor de dos números enteros." />
+
+<article class="exercise-workspace">
+    <header>
+        <span class="exercise-badge">Ejercicio 3</span>
+        <h1>Máximo Común Divisor</h1>
+        <p>Calcula el mayor número que divide exactamente a dos enteros mediante el algoritmo recursivo de Euclides.</p>
+    </header>
+
+    <section class="exercise-section" aria-labelledby="calculator-title">
+        <h2 id="calculator-title">Calcula el MCD</h2>
+
+        <div class="row g-3 align-items-end">
+            <div class="col-12 col-md-4">
+                <label for="first-number" class="form-label">Primer número entero</label>
+                <InputNumber id="first-number" class="form-control" @bind-Value="primerNumero" />
+            </div>
+            <div class="col-12 col-md-4">
+                <label for="second-number" class="form-label">Segundo número entero</label>
+                <InputNumber id="second-number" class="form-control" @bind-Value="segundoNumero" />
+            </div>
+            <div class="col-12 col-md-auto">
+                <button class="btn btn-primary" type="button" @onclick="Calcular">Calcular MCD</button>
+            </div>
+        </div>
+
+        @if (!string.IsNullOrWhiteSpace(error))
+        {
+            <div class="alert alert-danger mt-3" role="alert">@error</div>
+        }
+
+        @if (resultado is not null)
+        {
+            <div class="alert alert-success mt-4" role="status" aria-live="polite">
+                El MCD de <strong>@primerNumero</strong> y <strong>@segundoNumero</strong> es
+                <strong class="fs-4">@resultado</strong>.
+            </div>
+
+            <h3 class="h5 mt-4">Llamadas recursivas</h3>
+            <div class="table-responsive">
+                <table class="table table-striped align-middle">
+                    <thead>
+                        <tr>
+                            <th scope="col">Llamada</th>
+                            <th scope="col">Operación</th>
+                            <th scope="col">Siguiente llamada</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @for (var indice = 0; indice < pasos.Count; indice++)
+                        {
+                            var paso = pasos[indice];
+                            <tr>
+                                <td><code>MCD(@paso.Primero, @paso.Segundo)</code></td>
+                                @if (paso.Residuo is not null)
+                                {
+                                    <td>@paso.Primero % @paso.Segundo = @paso.Residuo</td>
+                                    <td><code>MCD(@paso.Segundo, @paso.Residuo)</code></td>
+                                }
+                                else
+                                {
+                                    <td colspan="2">Caso base: el segundo número es 0; se devuelve @paso.Primero.</td>
+                                }
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        }
+    </section>
+
+    <section class="exercise-section how-it-works" aria-labelledby="explanation-title">
+        <h2 id="explanation-title">¿Cómo funciona?</h2>
+        <div class="explanation-grid">
+            <div>
+                <span class="explanation-number">1</span>
+                <h3>Entrada</h3>
+                <p>Se solicitan dos números enteros. Pueden ser positivos, negativos o uno de ellos puede ser cero.</p>
+            </div>
+            <div>
+                <span class="explanation-number">2</span>
+                <h3>Caso base</h3>
+                <p>Cuando el segundo número es cero, el valor absoluto del primero es el MCD.</p>
+            </div>
+            <div>
+                <span class="explanation-number">3</span>
+                <h3>Paso recursivo</h3>
+                <p>Mientras el segundo número no sea cero, se llama de nuevo a MCD con el segundo número y el residuo de la división.</p>
+            </div>
+            <div>
+                <span class="explanation-number">4</span>
+                <h3>Resultado</h3>
+                <p>La última llamada devuelve el mayor divisor común y la tabla muestra cómo se llegó a él.</p>
+            </div>
+            <div>
+                <span class="explanation-number">5</span>
+                <h3>Ejemplo</h3>
+                <p>MCD(48, 18) pasa por MCD(18, 12), MCD(12, 6) y MCD(6, 0); el resultado es 6.</p>
+            </div>
+        </div>
+    </section>
+</article>
+
+@code {
+    private int? primerNumero = 48;
+    private int? segundoNumero = 18;
+    private long? resultado;
+    private IReadOnlyList<PasoMcd> pasos = [];
+    private string? error;
+
+    protected override void OnInitialized() => Calcular();
+
+    private void Calcular()
+    {
+        resultado = null;
+        pasos = [];
+        error = null;
+
+        if (primerNumero is null || segundoNumero is null)
+        {
+            error = "Escribe ambos números enteros.";
+            return;
+        }
+
+        try
+        {
+            resultado = Ejercicio3Algorithm.Calcular(primerNumero.Value, segundoNumero.Value);
+            pasos = Ejercicio3Algorithm.ObtenerPasos(primerNumero.Value, segundoNumero.Value);
+        }
+        catch (ArgumentException excepcion)
+        {
+            error = excepcion.Message;
+        }
+    }
+}
