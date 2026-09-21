@@ -3,6 +3,62 @@
     <h2>@Title</h2>
     <p>@Summary</p>
     <a class="btn btn-outline-primary" href="@Route">Abrir ejercicio</a>
+    <div class="exercise-art" aria-hidden="true">
+        @if (Number == "1")
+        {
+            <svg viewBox="0 0 220 160" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path d="M35 22C69 22 37 54 83 54S82 86 129 86S126 119 175 119" stroke="currentColor" stroke-width="1.5"/>
+                <circle cx="35" cy="22" r="5" fill="currentColor"/><circle cx="83" cy="54" r="5" fill="currentColor"/>
+                <circle cx="129" cy="86" r="5" fill="currentColor"/><circle cx="175" cy="119" r="5" fill="currentColor"/>
+                <text x="51" y="19">n!</text><text x="98" y="51">(n−1)!</text><text x="144" y="83">…</text><text x="187" y="122">1!</text>
+            </svg>
+        }
+        else if (Number == "2")
+        {
+            <svg viewBox="0 0 220 160" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path d="M110 31L59 87M110 31L161 87M59 87L31 134M59 87L87 134M161 87L133 134M161 87L189 134" stroke="currentColor" stroke-width="1.5"/>
+                <circle cx="110" cy="31" r="20" fill="#251c3a" stroke="currentColor"/><circle cx="59" cy="87" r="18" fill="#251c3a" stroke="currentColor"/>
+                <circle cx="161" cy="87" r="18" fill="#251c3a" stroke="currentColor"/>
+                <circle cx="31" cy="134" r="8" fill="currentColor"/><circle cx="87" cy="134" r="8" fill="currentColor"/>
+                <circle cx="133" cy="134" r="8" fill="currentColor"/><circle cx="189" cy="134" r="8" fill="currentColor"/>
+                <text x="95" y="36">F(n)</text><text x="39" y="92">n−1</text><text x="141" y="92">n−2</text>
+            </svg>
+        }
+        else if (Number == "3")
+        {
+            <svg viewBox="0 0 220 160" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path d="M30 40H74L94 75H136L157 110H195" stroke="currentColor" stroke-width="1.5"/>
+                <circle cx="30" cy="40" r="5" fill="currentColor"/><circle cx="94" cy="75" r="5" fill="currentColor"/>
+                <circle cx="157" cy="110" r="5" fill="currentColor"/>
+                <text x="42" y="35">mcd(a,b)</text><text x="105" y="69">mcd(b,r)</text><text x="166" y="105">r</text>
+                <path d="M26 131H194" stroke="currentColor" stroke-opacity=".35" stroke-dasharray="3 6"/>
+            </svg>
+        }
+        else if (Number == "4")
+        {
+            <svg viewBox="0 0 220 160" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <ellipse cx="45" cy="113" rx="27" ry="10" fill="#302346" stroke="currentColor"/>
+                <ellipse cx="91" cy="103" rx="29" ry="11" fill="#302346" stroke="currentColor"/>
+                <ellipse cx="144" cy="87" rx="32" ry="12" fill="#302346" stroke="currentColor"/>
+                <ellipse cx="185" cy="61" rx="30" ry="12" fill="#302346" stroke="currentColor"/>
+                <text x="40" y="118">1</text><text x="86" y="108">5</text><text x="135" y="92">10</text><text x="175" y="66">25</text>
+                <path d="M18 127H213" stroke="currentColor" stroke-opacity=".45"/>
+            </svg>
+        }
+        else
+        {
+            <svg viewBox="0 0 360 160" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path d="M45 129V25M180 129V25M315 129V25" stroke="currentColor" stroke-width="3" stroke-linecap="round"/>
+                <path d="M10 130H350" stroke="currentColor" stroke-width="3" stroke-linecap="round"/>
+                <rect x="14" y="103" width="62" height="17" rx="6" fill="#7442ad" stroke="currentColor"/>
+                <rect x="22" y="81" width="46" height="17" rx="6" fill="#9156cb" stroke="currentColor"/>
+                <rect x="30" y="59" width="30" height="17" rx="6" fill="#bc81f8" stroke="currentColor"/>
+                <path d="M78 49C143 0 236 0 294 48" stroke="currentColor" stroke-width="1.5" stroke-dasharray="5 6"/>
+                <path d="M284 44L295 49L289 58" stroke="currentColor" stroke-width="1.5"/>
+                <text x="40" y="150">A</text><text x="175" y="150">B</text><text x="310" y="150">C</text>
+            </svg>
+        }
+    </div>
 </article>
 
 @code {
