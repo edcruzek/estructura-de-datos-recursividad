@@ -1,3 +1,311 @@
 @page "/ejercicio-4"
+@using RecursividadWeb.Algorithms
+
 <PageTitle>Ejercicio 4 · Cambio de monedas</PageTitle>
-<PendingExercise Number="4" Title="Cambio de monedas" Statement="Calcula el cambio de una operación comercial usando el mínimo número posible de monedas de las denominaciones indicadas." />
+
+<article class="exercise-workspace cambio-page">
+    <header>
+        <span class="exercise-badge">Ejercicio 4</span>
+        <h1>Cambio de monedas</h1>
+        <p>
+            Calcula la cantidad exacta de monedas de cada denominación que deben devolverse
+            en una operación comercial, garantizando el mínimo número total de piezas mediante recursividad.
+        </p>
+    </header>
+
+    <section class="exercise-section" aria-labelledby="solver-title">
+        <h2 id="solver-title">Operación comercial</h2>
+
+        <div class="solver-controls">
+            <div>
+                <label for="purchase-amount" class="form-label">Importe de la compra ($)</label>
+                <InputNumber id="purchase-amount"
+                             class="form-control"
+                             @bind-Value="importeCompra"
+                             step="0.01"
+                             min="0.01"
+                             placeholder="73.26" />
+                <div class="form-text">Monto total a cobrar (pesos y centavos).</div>
+            </div>
+
+            <div>
+                <label for="paid-amount" class="form-label">Cantidad pagada ($)</label>
+                <InputNumber id="paid-amount"
+                             class="form-control"
+                             @bind-Value="cantidadPagada"
+                             step="0.01"
+                             min="0.01"
+                             placeholder="100.00" />
+                <div class="form-text">Dinero entregado por el cliente.</div>
+            </div>
+
+            <button class="btn btn-primary" type="button" @onclick="Calcular">Calcular cambio</button>
+            <button class="btn btn-outline-secondary" type="button" @onclick="Limpiar">Limpiar</button>
+        </div>
+
+        <div class="presets-container">
+            <span class="presets-label">Ejemplos rápidos:</span>
+            <button type="button" class="preset-chip" @onclick="() => CargarEjemplo(73.26m, 100.00m)">
+                $73.26 con $100.00 (Enunciado)
+            </button>
+            <button type="button" class="preset-chip" @onclick="() => CargarEjemplo(0.40m, 1.00m)">
+                $0.40 con $1.00 (Caso 60¢)
+            </button>
+            <button type="button" class="preset-chip" @onclick="() => CargarEjemplo(18.50m, 50.00m)">
+                $18.50 con $50.00
+            </button>
+            <button type="button" class="preset-chip" @onclick="() => CargarEjemplo(50.00m, 50.00m)">
+                $50.00 con $50.00 (Pago exacto)
+            </button>
+        </div>
+
+        @if (!string.IsNullOrWhiteSpace(error))
+        {
+            <div class="alert alert-danger mt-3" role="alert">@error</div>
+        }
+    </section>
+
+    @if (resultado is not null)
+    {
+        <section class="exercise-section" aria-labelledby="results-title">
+            <h2 id="results-title">Resultado de la operación</h2>
+
+            <div class="metrics-grid">
+                <div class="metric-card">
+                    <span class="metric-title">Compra</span>
+                    <span class="metric-value">$@resultado.ImporteCompra.ToString("F2")</span>
+                </div>
+                <div class="metric-card">
+                    <span class="metric-title">Pagado</span>
+                    <span class="metric-value">$@resultado.CantidadPagada.ToString("F2")</span>
+                </div>
+                <div class="metric-card highlight">
+                    <span class="metric-title">Cambio a devolver</span>
+                    <span class="metric-value">$@resultado.CambioTotal.ToString("F2")</span>
+                </div>
+                <div class="metric-card">
+                    <span class="metric-title">Total de piezas</span>
+                    <span class="metric-value">@resultado.TotalPiezas @(resultado.TotalPiezas == 1 ? "pieza" : "piezas")</span>
+                </div>
+            </div>
+
+            @if (resultado.CambioTotal == 0)
+            {
+                <div class="exact-payment-banner">
+                    <span class="exact-icon" aria-hidden="true">✓</span>
+                    <div>
+                        <strong>¡Pago exacto!</strong>
+                        <p class="mb-0">El cliente pagó el importe exacto de la compra. No se requiere devolver cambio.</p>
+                    </div>
+                </div>
+            }
+            else
+            {
+                <h3 class="h5 mt-4 mb-3">Piezas devueltas (@resultado.TotalPiezas en total)</h3>
+                <div class="coins-showcase" aria-label="Visualización de monedas devueltas">
+                    @foreach (var item in resultado.Desglose)
+                    {
+                        <div class="coin-card">
+                            <span class="coin-qty-badge" title="@item.Cantidad @(item.Cantidad == 1 ? "pieza" : "piezas")">
+                                @item.Cantidad
+                            </span>
+                            <div class="@ObtenerClaseMoneda(item.Denominacion)">
+                                @ObtenerTextoVisualMoneda(item.Denominacion)
+                            </div>
+                            <span class="coin-name">@item.Denominacion.Nombre</span>
+                            <span class="coin-subtotal">Subtotal: $@item.Subtotal.ToString("F2")</span>
+                        </div>
+                    }
+                </div>
+
+                <h3 class="h5 mt-4 mb-2">Desglose detallado</h3>
+                <div class="table-responsive">
+                    <table class="table table-striped table-hover align-middle mb-0">
+                        <thead class="table-light">
+                            <tr>
+                                <th scope="col">Denominación</th>
+                                <th scope="col">Tipo</th>
+                                <th scope="col" class="text-end">Valor unitario</th>
+                                <th scope="col" class="text-center">Cantidad</th>
+                                <th scope="col" class="text-end">Subtotal</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var item in resultado.Desglose)
+                            {
+                                <tr>
+                                    <td><strong>@item.Denominacion.Nombre</strong></td>
+                                    <td>
+                                        <span class="badge @(item.Denominacion.EsPeso ? "bg-primary" : "bg-warning text-dark")">
+                                            @(item.Denominacion.EsPeso ? "Peso" : "Centavo")
+                                        </span>
+                                    </td>
+                                    <td class="text-end">$@item.Denominacion.ValorEnPesos.ToString("F2")</td>
+                                    <td class="text-center">
+                                        <span class="badge bg-secondary rounded-pill px-3 py-2">
+                                            @item.Cantidad
+                                        </span>
+                                    </td>
+                                    <td class="text-end"><strong>$@item.Subtotal.ToString("F2")</strong></td>
+                                </tr>
+                            }
+                        </tbody>
+                        <tfoot class="table-light">
+                            <tr>
+                                <th colspan="3">Total</th>
+                                <th class="text-center">@resultado.TotalPiezas @(resultado.TotalPiezas == 1 ? "pieza" : "piezas")</th>
+                                <th class="text-end">$@resultado.CambioTotal.ToString("F2")</th>
+                            </tr>
+                        </tfoot>
+                    </table>
+                </div>
+
+                <section class="exercise-section recursion-section" aria-labelledby="recursion-title">
+                    <details>
+                        <summary id="recursion-title">Ver traza de llamadas recursivas</summary>
+                        <p class="text-muted mt-2 mb-2">
+                            El algoritmo evalúa sucesivamente cada denominación disponible de forma recursiva,
+                            calculando las piezas óptimas y pasando el cambio remanente al siguiente nivel de recursión.
+                        </p>
+                        <div class="recursion-tree" aria-label="Árbol de llamadas recursivas">
+                            @foreach (var paso in resultado.Pasos)
+                            {
+                                <div class="recursion-line @(paso.MonedasAsignadas > 0 ? "has-coins" : null)">
+                                    <span aria-hidden="true">@(paso.MonedasAsignadas > 0 ? "●" : "○")</span>
+                                    <span>@paso.Explicacion</span>
+                                </div>
+                            }
+                        </div>
+                    </details>
+                </section>
+            }
+        </section>
+    }
+
+    <section class="exercise-section how-it-works" aria-labelledby="explanation-title">
+        <h2 id="explanation-title">¿Cómo funciona?</h2>
+        <div class="explanation-grid">
+            <div>
+                <span class="explanation-number">1</span>
+                <h3>Entradas solicitadas</h3>
+                <p>
+                    El usuario ingresa dos valores monetarios: el <strong>importe de la compra</strong>
+                    y la <strong>cantidad pagada</strong> (ambos números mayores a cero, con hasta dos decimales
+                    para representar centavos, donde el pago debe ser mayor o igual a la compra).
+                </p>
+            </div>
+            <div>
+                <span class="explanation-number">2</span>
+                <h3>Caso base</h3>
+                <p>
+                    Si el cambio remanente llega a <strong>$0.00</strong> (0 centavos), la función recursiva
+                    termina de inmediato retornando 0 monedas adicionales. Asimismo, al alcanzar la denominación
+                    mínima de <strong>1 centavo</strong>, el monto restante se salda íntegramente con esa cantidad de piezas.
+                </p>
+            </div>
+            <div>
+                <span class="explanation-number">3</span>
+                <h3>Paso recursivo</h3>
+                <p>
+                    En cada llamada se toma la denominación actual (desde 100 pesos hasta 1 centavo).
+                    Para denominaciones de pesos se asigna la cantidad máxima posible y se invoca recursivamente
+                    la función con el residuo. Para centavos (50¢, 20¢, 1¢), la recursión evalúa las combinaciones
+                    posibles para garantizar el <em>mínimo global de piezas</em>, sumando las piezas elegidas al resultado recursivo.
+                </p>
+            </div>
+            <div>
+                <span class="explanation-number">4</span>
+                <h3>Resultado generado</h3>
+                <p>
+                    Se obtiene la lista de denominaciones con su respectivo número de piezas devueltas,
+                    el subtotal de cada una, el total de piezas acumuladas y la traza detallada de cada paso
+                    de la recursión.
+                </p>
+            </div>
+            <div>
+                <span class="explanation-number">5</span>
+                <h3>Ejemplo concreto</h3>
+                <p>
+                    Con una compra de <strong>$73.26</strong> y un pago de <strong>$100.00</strong>, el cambio es
+                    <strong>$26.74</strong> (2674¢). La recursión asigna: 1 de $20 (restan 674¢), 1 de $5 (restan 174¢),
+                    1 de $1 (restan 74¢), 1 de 50¢ (restan 24¢), 1 de 20¢ (restan 4¢) y 4 de 1¢ (restan 0¢),
+                    obteniendo exactamente <strong>9 piezas</strong>.
+                </p>
+            </div>
+        </div>
+    </section>
+</article>
+
+@code {
+    private decimal? importeCompra = 73.26m;
+    private decimal? cantidadPagada = 100.00m;
+    private ResultadoCambio? resultado;
+    private string? error;
+
+    protected override void OnInitialized()
+    {
+        Calcular();
+    }
+
+    private void Calcular()
+    {
+        error = null;
+        resultado = null;
+
+        if (importeCompra is null)
+        {
+            error = "Ingresa el importe de la compra.";
+            return;
+        }
+
+        if (cantidadPagada is null)
+        {
+            error = "Ingresa la cantidad pagada.";
+            return;
+        }
+
+        try
+        {
+            resultado = Ejercicio4Algorithm.CalcularCambio(importeCompra.Value, cantidadPagada.Value);
+        }
+        catch (Exception ex)
+        {
+            error = ex.Message;
+        }
+    }
+
+    private void CargarEjemplo(decimal compra, decimal pago)
+    {
+        importeCompra = compra;
+        cantidadPagada = pago;
+        Calcular();
+    }
+
+    private void Limpiar()
+    {
+        importeCompra = null;
+        cantidadPagada = null;
+        resultado = null;
+        error = null;
+    }
+
+    private static string ObtenerClaseMoneda(DenominacionMoneda denom)
+    {
+        if (denom.ValorEnPesos >= 20.00m)
+        {
+            return "coin-disc peso-gold";
+        }
+
+        if (denom.EsPeso)
+        {
+            return "coin-disc peso-silver";
+        }
+
+        return "coin-disc centavo-bronze";
+    }
+
+    private static string ObtenerTextoVisualMoneda(DenominacionMoneda denom)
+    {
+        return denom.EsPeso ? $"${denom.ValorEnPesos:0}" : $"{denom.ValorEnCentavos}¢";
+    }
+}
