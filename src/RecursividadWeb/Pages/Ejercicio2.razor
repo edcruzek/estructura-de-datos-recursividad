@@ -1,3 +1,227 @@
 @page "/ejercicio-2"
+@using System.Numerics
+@using RecursividadWeb.Algorithms
+
 <PageTitle>Ejercicio 2 · Fibonacci</PageTitle>
-<PendingExercise Number="2" Title="Fibonacci" Statement="Genera la serie de Fibonacci utilizando recursividad." />
+
+<article class="exercise-workspace fibonacci-page">
+    <header>
+        <span class="exercise-badge">Ejercicio 2</span>
+        <h1>Fibonacci</h1>
+        <p>
+            Genera la serie de Fibonacci mediante recursividad, visualizando la evolución de la secuencia
+            y la fórmula aditiva aplicada en cada posición.
+        </p>
+    </header>
+
+    <section class="exercise-section" aria-labelledby="form-title">
+        <h2 id="form-title">Generar serie</h2>
+
+        <form @onsubmit="Generar" class="fibonacci-form">
+            <div class="row g-3 align-items-end">
+                <div class="col-sm-6 col-md-5">
+                    <label for="input-cantidad" class="form-label fw-semibold">Cantidad de términos</label>
+                    <InputNumber id="input-cantidad"
+                                 class="form-control"
+                                 @bind-Value="cantidadSolicitada"
+                                 min="1"
+                                 max="@Ejercicio2Algorithm.MaximoTerminos"
+                                 placeholder="Ej. 10" />
+                    <div class="form-text">Valores permitidos: de 1 a @Ejercicio2Algorithm.MaximoTerminos términos.</div>
+                </div>
+
+                <div class="col-sm-6 col-md-3">
+                    <button class="btn btn-primary w-100" type="submit">
+                        Generar serie
+                    </button>
+                </div>
+
+                <div class="col-12 mt-2">
+                    <span class="text-muted small me-2">Valores de prueba:</span>
+                    <div class="btn-group btn-group-sm" role="group" aria-label="Términos de prueba rápida">
+                        @foreach (var prueba in EjemplosRapidos)
+                        {
+                            <button type="button"
+                                    class="btn btn-outline-secondary"
+                                    @onclick="() => CargarEjemplo(prueba)">
+                                @prueba términos
+                            </button>
+                        }
+                    </div>
+                </div>
+            </div>
+        </form>
+
+        @if (!string.IsNullOrWhiteSpace(error))
+        {
+            <div class="alert alert-danger mt-3" role="alert">
+                <strong>Error:</strong> @error
+            </div>
+        }
+    </section>
+
+    @if (terminos.Count > 0 && string.IsNullOrWhiteSpace(error))
+    {
+        <section class="exercise-section" aria-labelledby="sequence-title">
+            <h2 id="sequence-title">Secuencia generada</h2>
+
+            <div class="summary-cards-row">
+                <div class="summary-card">
+                    <span class="summary-label">Términos generados</span>
+                    <strong class="summary-value">@terminos.Count</strong>
+                </div>
+                <div class="summary-card">
+                    <span class="summary-label">Último término (@terminos[^1].Etiqueta)</span>
+                    <strong class="summary-value highlight">@terminos[^1].Valor.ToString("N0")</strong>
+                </div>
+            </div>
+
+            <div class="sequence-chips-container mt-3" aria-label="Visualización de términos en secuencia">
+                @foreach (var item in terminos)
+                {
+                    <div class="fib-chip @(item.Tipo == "Caso base" ? "base-chip" : null)" title="@item.Formula">
+                        <span class="chip-index">@item.Etiqueta</span>
+                        <strong class="chip-val">@item.Valor.ToString("N0")</strong>
+                    </div>
+                }
+            </div>
+
+            <div class="table-section mt-4">
+                <details open>
+                    <summary class="fw-bold mb-2">Tabla descriptiva de la serie</summary>
+                    <div class="table-responsive">
+                        <table class="table table-sm table-hover align-middle fibonacci-table">
+                            <thead class="table-light">
+                                <tr>
+                                    <th scope="col">Posición</th>
+                                    <th scope="col">Término</th>
+                                    <th scope="col">Tipo</th>
+                                    <th scope="col" class="text-end">Valor</th>
+                                    <th scope="col">Fórmula / Justificación</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach (var item in terminos)
+                                {
+                                    <tr class="@(item.Tipo == "Caso base" ? "table-warning" : null)">
+                                        <td>@(item.Indice + 1)</td>
+                                        <td><strong>@item.Etiqueta</strong></td>
+                                        <td>
+                                            <span class="badge @(item.Tipo == "Caso base" ? "bg-warning text-dark" : "bg-success")">
+                                                @item.Tipo
+                                            </span>
+                                        </td>
+                                        <td class="text-end font-monospace">@item.Valor.ToString("N0")</td>
+                                        <td><code>@item.Formula</code></td>
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+                    </div>
+                </details>
+            </div>
+        </section>
+    }
+
+    <section class="exercise-section how-it-works" aria-labelledby="explanation-title">
+        <h2 id="explanation-title">¿Cómo funciona?</h2>
+        <div class="explanation-grid">
+            <div>
+                <span class="explanation-number">1</span>
+                <h3>Entrada</h3>
+                <p>
+                    El usuario indica la cantidad de términos que desea obtener de la serie (entre 1 y
+                    @Ejercicio2Algorithm.MaximoTerminos términos) para su generación recursiva ordenada.
+                </p>
+            </div>
+            <div>
+                <span class="explanation-number">2</span>
+                <h3>Caso base</h3>
+                <p>
+                    La sucesión cuenta con dos condiciones de parada o arranque fijas: <strong>F(0) = 0</strong> y
+                    <strong>F(1) = 1</strong>, que no dependen de sumas recursivas de elementos previos.
+                </p>
+            </div>
+            <div>
+                <span class="explanation-number">3</span>
+                <h3>Paso recursivo</h3>
+                <p>
+                    Para cualquier término con índice <em>n ≥ 2</em>, el nuevo elemento se genera mediante la suma recursiva
+                    de sus dos antecesores inmediatos: <strong>F(n) = F(n − 1) + F(n − 2)</strong>.
+                </p>
+            </div>
+            <div>
+                <span class="explanation-number">4</span>
+                <h3>Resultado</h3>
+                <p>
+                    El método recursivo retorna la secuencia ordenada de los valores de Fibonacci, permitiendo comprobar
+                    cómo cada valor sucesivo satisface la relación de recurrencia.
+                </p>
+            </div>
+            <div>
+                <span class="explanation-number">5</span>
+                <h3>Ejemplo</h3>
+                <p>
+                    Para <strong>7 términos</strong>: F(0)=0, F(1)=1, F(2)=0+1=1, F(3)=1+1=2, F(4)=1+2=3, F(5)=2+3=5, F(6)=3+5=8.
+                    La serie resultante es <strong>[0, 1, 1, 2, 3, 5, 8]</strong>.
+                </p>
+            </div>
+        </div>
+    </section>
+</article>
+
+@code {
+    private static readonly int[] EjemplosRapidos = [1, 2, 5, 8, 10, 15];
+
+    private int? cantidadSolicitada = 8;
+    private IReadOnlyList<TerminoFibonacci> terminos = [];
+    private string? error;
+
+    protected override void OnInitialized()
+    {
+        Generar();
+    }
+
+    private void Generar()
+    {
+        error = null;
+        terminos = [];
+
+        if (cantidadSolicitada is null)
+        {
+            error = "Por favor, introduce la cantidad de términos a generar.";
+            return;
+        }
+
+        if (cantidadSolicitada < 1)
+        {
+            error = "La cantidad de términos debe ser mayor o igual que 1.";
+            return;
+        }
+
+        if (cantidadSolicitada > Ejercicio2Algorithm.MaximoTerminos)
+        {
+            error = $"Para esta aplicación, la cantidad máxima de términos admitida es {Ejercicio2Algorithm.MaximoTerminos}.";
+            return;
+        }
+
+        try
+        {
+            terminos = Ejercicio2Algorithm.GenerarDetalleSerie(cantidadSolicitada.Value);
+        }
+        catch (ArgumentOutOfRangeException ex)
+        {
+            error = ex.Message;
+        }
+        catch (Exception ex)
+        {
+            error = $"Ocurrió un error inesperado al generar la serie: {ex.Message}";
+        }
+    }
+
+    private void CargarEjemplo(int cantidad)
+    {
+        cantidadSolicitada = cantidad;
+        Generar();
+    }
+}
