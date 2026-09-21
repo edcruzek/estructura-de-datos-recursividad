@@ -1,3 +1,229 @@
 @page "/ejercicio-1"
+@using System.Numerics
+@using RecursividadWeb.Algorithms
+
 <PageTitle>Ejercicio 1 · Factorial</PageTitle>
-<PendingExercise Number="1" Title="Factorial" Statement="Calcula el factorial de un número mayor o igual que cero mediante una función o método recursivo." />
+
+<article class="exercise-workspace factorial-page">
+    <header>
+        <span class="exercise-badge">Ejercicio 1</span>
+        <h1>Factorial</h1>
+        <p>
+            Calcula el factorial de un número entero mayor o igual que cero (<em>n!</em>) mediante una función recursiva
+            y visualiza el flujo de llamadas de la pila de ejecución.
+        </p>
+    </header>
+
+    <section class="exercise-section" aria-labelledby="form-title">
+        <h2 id="form-title">Calcular factorial</h2>
+
+        <form @onsubmit="Calcular" class="factorial-form">
+            <div class="row g-3 align-items-end">
+                <div class="col-sm-6 col-md-5">
+                    <label for="input-numero" class="form-label fw-semibold">Número entero (n)</label>
+                    <InputNumber id="input-numero"
+                                 class="form-control"
+                                 @bind-Value="numeroIngresado"
+                                 min="0"
+                                 max="@Ejercicio1Algorithm.MaximoNumero"
+                                 placeholder="Ej. 5" />
+                    <div class="form-text">Valores permitidos: de 0 a @Ejercicio1Algorithm.MaximoNumero.</div>
+                </div>
+
+                <div class="col-sm-6 col-md-3">
+                    <button class="btn btn-primary w-100" type="submit">
+                        Calcular
+                    </button>
+                </div>
+
+                <div class="col-12 mt-2">
+                    <span class="text-muted small me-2">Valores de prueba:</span>
+                    <div class="btn-group btn-group-sm" role="group" aria-label="Valores de prueba rápida">
+                        @foreach (var prueba in EjemplosRapidos)
+                        {
+                            <button type="button"
+                                    class="btn btn-outline-secondary"
+                                    @onclick="() => CargarEjemplo(prueba)">
+                                @prueba!
+                            </button>
+                        }
+                    </div>
+                </div>
+            </div>
+        </form>
+
+        @if (!string.IsNullOrWhiteSpace(error))
+        {
+            <div class="alert alert-danger mt-3" role="alert">
+                <strong>Error:</strong> @error
+            </div>
+        }
+    </section>
+
+    @if (resultado.HasValue && string.IsNullOrWhiteSpace(error))
+    {
+        <section class="exercise-section" aria-labelledby="result-title">
+            <h2 id="result-title">Resultado obtenido</h2>
+
+            <div class="result-display-card">
+                <div class="result-header">
+                    <span class="result-label">@(numeroIngresado)!</span>
+                    <span class="result-badge">Cálculo completado</span>
+                </div>
+                <div class="result-main-value">
+                    @resultado.Value.ToString("N0")
+                </div>
+                <div class="result-expression">
+                    <code>@expresionMatematica</code>
+                </div>
+            </div>
+
+            @if (pasosRecursivos.Count > 0)
+            {
+                <div class="steps-section mt-4">
+                    <details open>
+                        <summary class="fw-bold mb-2">Desglose de llamadas recursivas (@pasosRecursivos.Count niveles)</summary>
+                        <p class="text-muted small">
+                            La recursión desciende apilando llamadas hasta alcanzar el caso base (0! o 1!). A continuación, se desapilan multiplicando los retornos parciales.
+                        </p>
+                        <div class="table-responsive">
+                            <table class="table table-sm table-hover align-middle steps-table">
+                                <thead class="table-light">
+                                    <tr>
+                                        <th scope="col">Nivel</th>
+                                        <th scope="col">Tipo</th>
+                                        <th scope="col">Operación realizada</th>
+                                        <th scope="col" class="text-end">Subresultado</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @foreach (var paso in pasosRecursivos)
+                                    {
+                                        <tr class="@(paso.Tipo == "Caso base" ? "table-warning" : null)">
+                                            <td><strong>@paso.Numero</strong></td>
+                                            <td>
+                                                <span class="badge @(paso.Tipo == "Caso base" ? "bg-warning text-dark" : "bg-info text-dark")">
+                                                    @paso.Tipo
+                                                </span>
+                                            </td>
+                                            <td><code>@paso.Operacion</code></td>
+                                            <td class="text-end font-monospace">@paso.ResultadoParcial.ToString("N0")</td>
+                                        </tr>
+                                    }
+                                </tbody>
+                            </table>
+                        </div>
+                    </details>
+                </div>
+            }
+        </section>
+    }
+
+    <section class="exercise-section how-it-works" aria-labelledby="explanation-title">
+        <h2 id="explanation-title">¿Cómo funciona?</h2>
+        <div class="explanation-grid">
+            <div>
+                <span class="explanation-number">1</span>
+                <h3>Entrada</h3>
+                <p>
+                    Se solicita un número entero no negativo <em>n</em> (<em>n ≥ 0</em>). En esta interfaz se admiten valores
+                    desde 0 hasta @Ejercicio1Algorithm.MaximoNumero para mantener un rendimiento óptimo y visualización precisa.
+                </p>
+            </div>
+            <div>
+                <span class="explanation-number">2</span>
+                <h3>Caso base</h3>
+                <p>
+                    Si <em>n = 0</em> o <em>n = 1</em>, la función no genera nuevas llamadas recursivas y devuelve directamente <strong>1</strong>,
+                    pues por definición matemática <em>0! = 1</em> y <em>1! = 1</em>.
+                </p>
+            </div>
+            <div>
+                <span class="explanation-number">3</span>
+                <h3>Paso recursivo</h3>
+                <p>
+                    Para cualquier <em>n &gt; 1</em>, el problema se divide llamando recursivamente a la función con el valor antecesor
+                    (<em>n − 1</em>) y multiplicándolo por el valor actual: <strong>n! = n × (n − 1)!</strong>.
+                </p>
+            </div>
+            <div>
+                <span class="explanation-number">4</span>
+                <h3>Resultado</h3>
+                <p>
+                    Al alcanzarse el caso base, la pila de llamadas se desenrolla multiplicando sucesivamente cada retorno hasta
+                    entregar el producto acumulado final correspondiente a <em>n!</em>.
+                </p>
+            </div>
+            <div>
+                <span class="explanation-number">5</span>
+                <h3>Ejemplo</h3>
+                <p>
+                    Para <strong>5!</strong>: Factorial(5) = 5 × Factorial(4) = 5 × (4 × (3 × (2 × 1))) = <strong>120</strong>.
+                    Se apilan 5 llamadas hasta el caso base y se resuelven de regreso.
+                </p>
+            </div>
+        </div>
+    </section>
+</article>
+
+@code {
+    private static readonly int[] EjemplosRapidos = [0, 1, 3, 5, 7, 10];
+
+    private int? numeroIngresado = 5;
+    private BigInteger? resultado;
+    private string? expresionMatematica;
+    private IReadOnlyList<PasoFactorial> pasosRecursivos = [];
+    private string? error;
+
+    protected override void OnInitialized()
+    {
+        Calcular();
+    }
+
+    private void Calcular()
+    {
+        error = null;
+        resultado = null;
+        expresionMatematica = null;
+        pasosRecursivos = [];
+
+        if (numeroIngresado is null)
+        {
+            error = "Por favor, introduce un número entero.";
+            return;
+        }
+
+        if (numeroIngresado < 0)
+        {
+            error = "El número debe ser mayor o igual que cero (n ≥ 0).";
+            return;
+        }
+
+        if (numeroIngresado > Ejercicio1Algorithm.MaximoNumero)
+        {
+            error = $"Para esta aplicación, el valor máximo admitido es {Ejercicio1Algorithm.MaximoNumero}.";
+            return;
+        }
+
+        try
+        {
+            resultado = Ejercicio1Algorithm.Calcular(numeroIngresado.Value);
+            expresionMatematica = Ejercicio1Algorithm.ObtenerExpresionMatematica(numeroIngresado.Value);
+            pasosRecursivos = Ejercicio1Algorithm.ObtenerPasos(numeroIngresado.Value);
+        }
+        catch (ArgumentOutOfRangeException ex)
+        {
+            error = ex.Message;
+        }
+        catch (Exception ex)
+        {
+            error = $"Ocurrió un error inesperado al calcular: {ex.Message}";
+        }
+    }
+
+    private void CargarEjemplo(int valor)
+    {
+        numeroIngresado = valor;
+        Calcular();
+    }
+}

@@ -1,0 +1,112 @@
+.factorial-page {
+    --primary-blue: #0d6efd;
+    --dark-blue: #082c63;
+    --light-bg: #f8fbfe;
+}
+
+.factorial-form {
+    padding: 1.25rem;
+    border: 1px solid #dce7f0;
+    border-radius: 1rem;
+    background: var(--light-bg);
+}
+
+.result-display-card {
+    padding: 1.5rem;
+    border: 1px solid #cbe3f7;
+    border-radius: 1rem;
+    background: linear-gradient(135deg, #f0f7ff, #e2f0fc);
+    box-shadow: 0 0.5rem 1.2rem rgba(13, 110, 253, 0.08);
+}
+
+.result-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 0.5rem;
+}
+
+.result-label {
+    font-size: 1.3rem;
+    font-weight: 800;
+    color: var(--dark-blue);
+}
+
+.result-badge {
+    padding: 0.25rem 0.65rem;
+    border-radius: 999px;
+    background: #d1e7dd;
+    color: #0f5132;
+    font-size: 0.8rem;
+    font-weight: 700;
+}
+
+.result-main-value {
+    font-size: clamp(1.8rem, 4vw, 2.6rem);
+    font-weight: 800;
+    color: var(--primary-blue);
+    word-break: break-all;
+    line-height: 1.2;
+    margin-bottom: 0.75rem;
+}
+
+.result-expression {
+    padding: 0.5rem 0.85rem;
+    border-radius: 0.5rem;
+    background: white;
+    border: 1px solid #d0e1f3;
+    font-size: 0.95rem;
+    word-break: break-word;
+}
+
+.steps-table {
+    margin-top: 0.5rem;
+}
+
+.explanation-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(12rem, 1fr));
+    gap: 1rem;
+}
+
+.explanation-grid > div {
+    position: relative;
+    padding: 1rem;
+    border: 1px solid #dce7f0;
+    border-radius: 0.85rem;
+    background: #fff;
+}
+
+.explanation-grid h3 {
+    margin: 0 0 0.45rem 2.65rem;
+    color: var(--dark-blue);
+    font-size: 1.05rem;
+}
+
+.explanation-grid p {
+    margin: 0;
+    color: #334155;
+    font-size: 0.92rem;
+}
+
+.explanation-number {
+    position: absolute;
+    top: 0.8rem;
+    left: 1rem;
+    display: grid;
+    place-items: center;
+    width: 2rem;
+    height: 2rem;
+    border-radius: 50%;
+    color: var(--dark-blue);
+    background: #ffd766;
+    font-weight: 900;
+}
+
+@media (max-width: 700px) {
+    .result-header {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 0.35rem;
+    }
+}

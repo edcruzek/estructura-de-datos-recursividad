@@ -1,0 +1,132 @@
+.fibonacci-page {
+    --primary-blue: #0d6efd;
+    --dark-blue: #082c63;
+    --light-bg: #f8fbfe;
+}
+
+.fibonacci-form {
+    padding: 1.25rem;
+    border: 1px solid #dce7f0;
+    border-radius: 1rem;
+    background: var(--light-bg);
+}
+
+.summary-cards-row {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(12rem, 1fr));
+    gap: 1rem;
+    margin-bottom: 1.25rem;
+}
+
+.summary-card {
+    display: flex;
+    flex-direction: column;
+    padding: 1rem 1.25rem;
+    border: 1px solid #cbe3f7;
+    border-radius: 0.85rem;
+    background: linear-gradient(135deg, #f0f7ff, #e2f0fc);
+}
+
+.summary-label {
+    font-size: 0.85rem;
+    color: #475569;
+    font-weight: 600;
+}
+
+.summary-value {
+    font-size: 1.6rem;
+    color: var(--dark-blue);
+}
+
+.summary-value.highlight {
+    color: var(--primary-blue);
+    word-break: break-all;
+}
+
+.sequence-chips-container {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.65rem;
+    padding: 1rem;
+    border: 1px solid #dce7f0;
+    border-radius: 0.85rem;
+    background: #ffffff;
+}
+
+.fib-chip {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.45rem;
+    padding: 0.35rem 0.75rem;
+    border: 1px solid #c9d8ea;
+    border-radius: 999px;
+    background: #f1f6fd;
+    font-size: 0.9rem;
+    color: #1e293b;
+    transition: transform 0.15s ease, background-color 0.15s ease;
+}
+
+.fib-chip:hover {
+    background: #e2eeff;
+    transform: translateY(-2px);
+}
+
+.fib-chip.base-chip {
+    border-color: #ffe08a;
+    background: #fff9e6;
+}
+
+.chip-index {
+    font-size: 0.75rem;
+    font-weight: 700;
+    color: #64748b;
+}
+
+.chip-val {
+    font-weight: 800;
+    color: var(--dark-blue);
+}
+
+.fibonacci-table {
+    margin-top: 0.5rem;
+}
+
+.explanation-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(12rem, 1fr));
+    gap: 1rem;
+}
+
+.explanation-grid > div {
+    position: relative;
+    padding: 1rem;
+    border: 1px solid #dce7f0;
+    border-radius: 0.85rem;
+    background: #fff;
+}
+
+.explanation-grid h3 {
+    margin: 0 0 0.45rem 2.65rem;
+    color: var(--dark-blue);
+    font-size: 1.05rem;
+}
+
+.explanation-grid p {
+    margin: 0;
+    color: #334155;
+    font-size: 0.92rem;
+}
+
+.explanation-number {
+    position: absolute;
+    top: 0.8rem;
+    left: 1rem;
+    display: grid;
+    place-items: center;
+    width: 2rem;
+    height: 2rem;
+    border-radius: 50%;
+    color: var(--dark-blue);
+    background: #ffd766;
+    font-weight: 900;
+}
