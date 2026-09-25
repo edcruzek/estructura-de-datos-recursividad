@@ -3,14 +3,15 @@ using RecursividadWeb.Algorithms;
 
 namespace RecursividadWeb.Tests;
 
-public class Ejercicio2Tests
+/// <summary>Comprueba términos, serie, detalle explicativo y límites de Fibonacci.</summary>
+public class FibonacciTests
 {
     [Theory]
     [InlineData(0, 0)]
     [InlineData(1, 1)]
     public void CasosBase_TerminoRetornaValoresIniciales(int n, long esperado)
     {
-        var resultado = Ejercicio2Algorithm.CalcularTermino(n);
+        var resultado = FibonacciAlgorithm.CalcularTermino(n);
 
         Assert.Equal(new BigInteger(esperado), resultado);
     }
@@ -18,8 +19,8 @@ public class Ejercicio2Tests
     [Fact]
     public void GenerarSerie_CasosBase_RetornaTerminosIniciales()
     {
-        var serie1 = Ejercicio2Algorithm.GenerarSerie(1);
-        var serie2 = Ejercicio2Algorithm.GenerarSerie(2);
+        var serie1 = FibonacciAlgorithm.GenerarSerie(1);
+        var serie2 = FibonacciAlgorithm.GenerarSerie(2);
 
         Assert.Equal([BigInteger.Zero], serie1);
         Assert.Equal([BigInteger.Zero, BigInteger.One], serie2);
@@ -36,7 +37,7 @@ public class Ejercicio2Tests
     [InlineData(15, 610)]
     public void CasosNormales_CalculanTerminoCorrecto(int n, long esperado)
     {
-        var resultado = Ejercicio2Algorithm.CalcularTermino(n);
+        var resultado = FibonacciAlgorithm.CalcularTermino(n);
 
         Assert.Equal(new BigInteger(esperado), resultado);
     }
@@ -44,7 +45,7 @@ public class Ejercicio2Tests
     [Fact]
     public void GenerarSerie_GeneraSecuenciaEsperada()
     {
-        var serie = Ejercicio2Algorithm.GenerarSerie(8);
+        var serie = FibonacciAlgorithm.GenerarSerie(8);
         BigInteger[] esperado = [0, 1, 1, 2, 3, 5, 8, 13];
 
         Assert.Equal(esperado, serie);
@@ -54,7 +55,7 @@ public class Ejercicio2Tests
     public void GenerarSerie_CumplePropiedadRecursivaEnTodosLosElementos()
     {
         const int cantidad = 20;
-        var serie = Ejercicio2Algorithm.GenerarSerie(cantidad);
+        var serie = FibonacciAlgorithm.GenerarSerie(cantidad);
 
         Assert.Equal(cantidad, serie.Count);
 
@@ -67,33 +68,33 @@ public class Ejercicio2Tests
     [Fact]
     public void LimiteMaximo_GeneraCantidadIndicada()
     {
-        var serie = Ejercicio2Algorithm.GenerarSerie(Ejercicio2Algorithm.MaximoTerminos);
+        var serie = FibonacciAlgorithm.GenerarSerie(FibonacciAlgorithm.MaximoTerminos);
 
-        Assert.Equal(Ejercicio2Algorithm.MaximoTerminos, serie.Count);
-        Assert.Equal(serie[^1], Ejercicio2Algorithm.CalcularTermino(Ejercicio2Algorithm.MaximoTerminos - 1));
+        Assert.Equal(FibonacciAlgorithm.MaximoTerminos, serie.Count);
+        Assert.Equal(serie[^1], FibonacciAlgorithm.CalcularTermino(FibonacciAlgorithm.MaximoTerminos - 1));
     }
 
     [Theory]
     [InlineData(0)]
     [InlineData(-1)]
-    [InlineData(Ejercicio2Algorithm.MaximoTerminos + 1)]
+    [InlineData(FibonacciAlgorithm.MaximoTerminos + 1)]
     public void GenerarSerie_CantidadFueraDeRango_LanzaExcepcion(int cantidad)
     {
-        Assert.Throws<ArgumentOutOfRangeException>(() => Ejercicio2Algorithm.GenerarSerie(cantidad));
+        Assert.Throws<ArgumentOutOfRangeException>(() => FibonacciAlgorithm.GenerarSerie(cantidad));
     }
 
     [Theory]
     [InlineData(-1)]
-    [InlineData(Ejercicio2Algorithm.MaximoTerminos + 1)]
+    [InlineData(FibonacciAlgorithm.MaximoTerminos + 1)]
     public void CalcularTermino_IndiceFueraDeRango_LanzaExcepcion(int n)
     {
-        Assert.Throws<ArgumentOutOfRangeException>(() => Ejercicio2Algorithm.CalcularTermino(n));
+        Assert.Throws<ArgumentOutOfRangeException>(() => FibonacciAlgorithm.CalcularTermino(n));
     }
 
     [Fact]
     public void GenerarDetalleSerie_IncluyeInformacionDescriptiva()
     {
-        var detalles = Ejercicio2Algorithm.GenerarDetalleSerie(4);
+        var detalles = FibonacciAlgorithm.GenerarDetalleSerie(4);
 
         Assert.Equal(4, detalles.Count);
         Assert.Equal("F(0)", detalles[0].Etiqueta);

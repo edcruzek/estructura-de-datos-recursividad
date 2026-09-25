@@ -3,14 +3,15 @@ using RecursividadWeb.Algorithms;
 
 namespace RecursividadWeb.Tests;
 
-public class Ejercicio1Tests
+/// <summary>Comprueba casos base, valores habituales, límites y pasos del factorial.</summary>
+public class FactorialTests
 {
     [Theory]
     [InlineData(0, 1)]
     [InlineData(1, 1)]
     public void CasosBase_RetornanUno(int n, long esperado)
     {
-        var resultado = Ejercicio1Algorithm.Calcular(n);
+        var resultado = FactorialAlgorithm.Calcular(n);
 
         Assert.Equal(new BigInteger(esperado), resultado);
     }
@@ -26,7 +27,7 @@ public class Ejercicio1Tests
     [InlineData(12, 479001600)]
     public void CasosNormales_CalculanFactorialCorrecto(int n, long esperado)
     {
-        var resultado = Ejercicio1Algorithm.Calcular(n);
+        var resultado = FactorialAlgorithm.Calcular(n);
 
         Assert.Equal(new BigInteger(esperado), resultado);
     }
@@ -37,7 +38,7 @@ public class Ejercicio1Tests
         // 25! = 15511210043330985984000000
         var esperado = BigInteger.Parse("15511210043330985984000000");
 
-        var resultado = Ejercicio1Algorithm.Calcular(Ejercicio1Algorithm.MaximoNumero);
+        var resultado = FactorialAlgorithm.Calcular(FactorialAlgorithm.MaximoNumero);
 
         Assert.Equal(esperado, resultado);
     }
@@ -45,17 +46,17 @@ public class Ejercicio1Tests
     [Theory]
     [InlineData(-1)]
     [InlineData(-10)]
-    [InlineData(Ejercicio1Algorithm.MaximoNumero + 1)]
+    [InlineData(FactorialAlgorithm.MaximoNumero + 1)]
     [InlineData(100)]
     public void EntradasFueraDeRango_LanzanExcepcion(int n)
     {
-        Assert.Throws<ArgumentOutOfRangeException>(() => Ejercicio1Algorithm.Calcular(n));
+        Assert.Throws<ArgumentOutOfRangeException>(() => FactorialAlgorithm.Calcular(n));
     }
 
     [Fact]
     public void ObtenerPasos_ContieneDesgloseAdecuado()
     {
-        var pasos = Ejercicio1Algorithm.ObtenerPasos(4);
+        var pasos = FactorialAlgorithm.ObtenerPasos(4);
 
         Assert.Equal(4, pasos.Count);
         Assert.Equal("Caso base", pasos[0].Tipo);
@@ -67,7 +68,7 @@ public class Ejercicio1Tests
     [Fact]
     public void ExpresionMatematica_GeneraFormatoEsperado()
     {
-        var expresion = Ejercicio1Algorithm.ObtenerExpresionMatematica(5);
+        var expresion = FactorialAlgorithm.ObtenerExpresionMatematica(5);
 
         Assert.Contains("5! = 5 × 4 × 3 × 2 × 1 = 120", expresion);
     }

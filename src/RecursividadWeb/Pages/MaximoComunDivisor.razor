@@ -105,14 +105,17 @@
 </article>
 
 @code {
+    // Entradas, resultado y divisiones de Euclides mostradas en pantalla.
     private int? primerNumero = 48;
     private int? segundoNumero = 18;
     private long? resultado;
     private IReadOnlyList<PasoMcd> pasos = [];
     private string? error;
 
+    // Presenta un ejemplo desde la primera carga.
     protected override void OnInitialized() => Calcular();
 
+    // La página gestiona la entrada; el cálculo y la traza viven en el algoritmo.
     private void Calcular()
     {
         resultado = null;
@@ -127,8 +130,8 @@
 
         try
         {
-            resultado = Ejercicio3Algorithm.Calcular(primerNumero.Value, segundoNumero.Value);
-            pasos = Ejercicio3Algorithm.ObtenerPasos(primerNumero.Value, segundoNumero.Value);
+            resultado = MaximoComunDivisorAlgorithm.Calcular(primerNumero.Value, segundoNumero.Value);
+            pasos = MaximoComunDivisorAlgorithm.ObtenerPasos(primerNumero.Value, segundoNumero.Value);
         }
         catch (ArgumentException excepcion)
         {

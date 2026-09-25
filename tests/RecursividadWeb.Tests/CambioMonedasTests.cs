@@ -2,13 +2,14 @@ using RecursividadWeb.Algorithms;
 
 namespace RecursividadWeb.Tests;
 
-public class Ejercicio4Tests
+/// <summary>Comprueba el cambio mínimo, casos no canónicos, validación y desglose.</summary>
+public class CambioMonedasTests
 {
     [Fact]
     public void EjemploDocumentacion_Compra73_26_Pago100_ProduceCambioYDesgloseCorrecto()
     {
         // Caso exacto del enunciado: compra de 73.26 pesos, pago de 100 pesos -> cambio 26.74 pesos
-        var resultado = Ejercicio4Algorithm.CalcularCambio(73.26m, 100.00m);
+        var resultado = CambioMonedasAlgorithm.CalcularCambio(73.26m, 100.00m);
 
         Assert.Equal(26.74m, resultado.CambioTotal);
         Assert.Equal(2674, resultado.CambioEnCentavos);
@@ -39,7 +40,7 @@ public class Ejercicio4Tests
     [Fact]
     public void PagoExacto_DevuelveCeroPiezas()
     {
-        var resultado = Ejercicio4Algorithm.CalcularCambio(50.00m, 50.00m);
+        var resultado = CambioMonedasAlgorithm.CalcularCambio(50.00m, 50.00m);
 
         Assert.Equal(0.00m, resultado.CambioTotal);
         Assert.Equal(0, resultado.CambioEnCentavos);
@@ -50,7 +51,7 @@ public class Ejercicio4Tests
     [Fact]
     public void CasoBase_UnCentavoDeCambio_DevuelveUnaSolaPieza()
     {
-        var resultado = Ejercicio4Algorithm.CalcularCambio(0.99m, 1.00m);
+        var resultado = CambioMonedasAlgorithm.CalcularCambio(0.99m, 1.00m);
 
         Assert.Equal(0.01m, resultado.CambioTotal);
         Assert.Equal(1, resultado.CambioEnCentavos);
@@ -66,7 +67,7 @@ public class Ejercicio4Tests
     {
         // Con 60 centavos, un algoritmo codicioso daría 1 de 50¢ y 10 de 1¢ (11 monedas).
         // El algoritmo óptimo debe devolver 3 monedas de 20 centavos (3 piezas).
-        var resultado = Ejercicio4Algorithm.CalcularCambio(0.40m, 1.00m);
+        var resultado = CambioMonedasAlgorithm.CalcularCambio(0.40m, 1.00m);
 
         Assert.Equal(0.60m, resultado.CambioTotal);
         Assert.Equal(3, resultado.TotalPiezas);
@@ -81,7 +82,7 @@ public class Ejercicio4Tests
     {
         // Con 80 centavos, codicioso daría 50 + 20 + 10x1 = 12 monedas.
         // Óptimo devuelve 4 monedas de 20 centavos = 4 piezas.
-        var resultado = Ejercicio4Algorithm.CalcularCambio(0.20m, 1.00m);
+        var resultado = CambioMonedasAlgorithm.CalcularCambio(0.20m, 1.00m);
 
         Assert.Equal(0.80m, resultado.CambioTotal);
         Assert.Equal(4, resultado.TotalPiezas);
@@ -107,7 +108,7 @@ public class Ejercicio4Tests
         var compra = 10.00m;
         var pago = compra + valor;
 
-        var resultado = Ejercicio4Algorithm.CalcularCambio(compra, pago);
+        var resultado = CambioMonedasAlgorithm.CalcularCambio(compra, pago);
 
         Assert.Equal(valor, resultado.CambioTotal);
         Assert.Equal(1, resultado.TotalPiezas);
@@ -120,7 +121,7 @@ public class Ejercicio4Tests
     [Fact]
     public void CambioGrande_CalculaCorrectamenteConMonedasDeCien()
     {
-        var resultado = Ejercicio4Algorithm.CalcularCambio(100.00m, 1000.00m);
+        var resultado = CambioMonedasAlgorithm.CalcularCambio(100.00m, 1000.00m);
 
         Assert.Equal(900.00m, resultado.CambioTotal);
         Assert.Equal(9, resultado.TotalPiezas);
@@ -136,31 +137,31 @@ public class Ejercicio4Tests
     public void ImporteCompraInvalido_CeroONegativo_LanzaExcepcion(double importeInvalido)
     {
         Assert.Throws<ArgumentOutOfRangeException>(
-            () => Ejercicio4Algorithm.CalcularCambio((decimal)importeInvalido, 50.00m));
+            () => CambioMonedasAlgorithm.CalcularCambio((decimal)importeInvalido, 50.00m));
     }
 
     [Fact]
     public void CantidadPagadaMenorQueCompra_LanzaExcepcion()
     {
         Assert.Throws<ArgumentException>(
-            () => Ejercicio4Algorithm.CalcularCambio(100.00m, 80.00m));
+            () => CambioMonedasAlgorithm.CalcularCambio(100.00m, 80.00m));
     }
 
     [Fact]
     public void MasDeDosDecimales_EnCompraOPago_LanzaExcepcion()
     {
         Assert.Throws<ArgumentException>(
-            () => Ejercicio4Algorithm.CalcularCambio(12.345m, 50.00m));
+            () => CambioMonedasAlgorithm.CalcularCambio(12.345m, 50.00m));
 
         Assert.Throws<ArgumentException>(
-            () => Ejercicio4Algorithm.CalcularCambio(10.00m, 50.999m));
+            () => CambioMonedasAlgorithm.CalcularCambio(10.00m, 50.999m));
     }
 
     [Fact]
     public void MontoExcedeMaximoPermitido_LanzaExcepcion()
     {
         Assert.Throws<ArgumentOutOfRangeException>(
-            () => Ejercicio4Algorithm.CalcularCambio(Ejercicio4Algorithm.MaximoMonto + 1m, Ejercicio4Algorithm.MaximoMonto + 10m));
+            () => CambioMonedasAlgorithm.CalcularCambio(CambioMonedasAlgorithm.MaximoMonto + 1m, CambioMonedasAlgorithm.MaximoMonto + 10m));
     }
 
     [Theory]
@@ -173,7 +174,7 @@ public class Ejercicio4Tests
         var compra = (decimal)compraDouble;
         var pago = (decimal)pagoDouble;
 
-        var resultado = Ejercicio4Algorithm.CalcularCambio(compra, pago);
+        var resultado = CambioMonedasAlgorithm.CalcularCambio(compra, pago);
 
         var sumaSubtotales = resultado.Desglose.Sum(d => d.Subtotal);
         Assert.Equal(resultado.CambioTotal, sumaSubtotales);
@@ -185,7 +186,7 @@ public class Ejercicio4Tests
     [Fact]
     public void TrazaRecursiva_GeneraPasosConNivelesYExplicaciones()
     {
-        var resultado = Ejercicio4Algorithm.CalcularCambio(73.26m, 100.00m);
+        var resultado = CambioMonedasAlgorithm.CalcularCambio(73.26m, 100.00m);
 
         Assert.NotEmpty(resultado.Pasos);
         Assert.Contains(resultado.Pasos, p => p.Denominacion == "20 pesos" && p.MonedasAsignadas == 1);

@@ -25,9 +25,9 @@
                                  class="form-control"
                                  @bind-Value="cantidadSolicitada"
                                  min="1"
-                                 max="@Ejercicio2Algorithm.MaximoTerminos"
+                                 max="@FibonacciAlgorithm.MaximoTerminos"
                                  placeholder="Ej. 10" />
-                    <div class="form-text">Valores permitidos: de 1 a @Ejercicio2Algorithm.MaximoTerminos términos.</div>
+                    <div class="form-text">Valores permitidos: de 1 a @FibonacciAlgorithm.MaximoTerminos términos.</div>
                 </div>
 
                 <div class="col-sm-6 col-md-3">
@@ -131,7 +131,7 @@
                 <h3>Entrada</h3>
                 <p>
                     El usuario indica la cantidad de términos que desea obtener de la serie (entre 1 y
-                    @Ejercicio2Algorithm.MaximoTerminos términos) para su generación recursiva ordenada.
+                    @FibonacciAlgorithm.MaximoTerminos términos) para su generación recursiva ordenada.
                 </p>
             </div>
             <div>
@@ -171,17 +171,20 @@
 </article>
 
 @code {
+    // Estado de la serie y de los ejemplos rápidos que presenta la interfaz.
     private static readonly int[] EjemplosRapidos = [1, 2, 5, 8, 10, 15];
 
     private int? cantidadSolicitada = 8;
     private IReadOnlyList<TerminoFibonacci> terminos = [];
     private string? error;
 
+    // Genera una serie inicial para que la explicación no aparezca vacía.
     protected override void OnInitialized()
     {
         Generar();
     }
 
+    // Delega la recursión al algoritmo y muestra un mensaje si la entrada no es válida.
     private void Generar()
     {
         error = null;
@@ -199,15 +202,15 @@
             return;
         }
 
-        if (cantidadSolicitada > Ejercicio2Algorithm.MaximoTerminos)
+        if (cantidadSolicitada > FibonacciAlgorithm.MaximoTerminos)
         {
-            error = $"Para esta aplicación, la cantidad máxima de términos admitida es {Ejercicio2Algorithm.MaximoTerminos}.";
+            error = $"Para esta aplicación, la cantidad máxima de términos admitida es {FibonacciAlgorithm.MaximoTerminos}.";
             return;
         }
 
         try
         {
-            terminos = Ejercicio2Algorithm.GenerarDetalleSerie(cantidadSolicitada.Value);
+            terminos = FibonacciAlgorithm.GenerarDetalleSerie(cantidadSolicitada.Value);
         }
         catch (ArgumentOutOfRangeException ex)
         {
@@ -219,6 +222,7 @@
         }
     }
 
+    // Actualiza la cantidad y ejecuta el mismo flujo de generación.
     private void CargarEjemplo(int cantidad)
     {
         cantidadSolicitada = cantidad;

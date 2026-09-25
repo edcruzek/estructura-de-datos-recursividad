@@ -2,12 +2,13 @@ using RecursividadWeb.Algorithms;
 
 namespace RecursividadWeb.Tests;
 
-public class Ejercicio3Tests
+/// <summary>Comprueba el algoritmo de Euclides con signos, ceros, límites y traza.</summary>
+public class MaximoComunDivisorTests
 {
     [Fact]
     public void NumerosPositivos_CalculaElMcd()
     {
-        Assert.Equal(6, Ejercicio3Algorithm.Calcular(48, 18));
+        Assert.Equal(6, MaximoComunDivisorAlgorithm.Calcular(48, 18));
     }
 
     [Theory]
@@ -16,7 +17,7 @@ public class Ejercicio3Tests
     [InlineData(-48, -18, 6)]
     public void NumerosNegativos_UsaSusValoresAbsolutos(int primero, int segundo, long esperado)
     {
-        Assert.Equal(esperado, Ejercicio3Algorithm.Calcular(primero, segundo));
+        Assert.Equal(esperado, MaximoComunDivisorAlgorithm.Calcular(primero, segundo));
     }
 
     [Theory]
@@ -24,13 +25,13 @@ public class Ejercicio3Tests
     [InlineData(25, 0, 25)]
     public void UnNumeroCero_DevuelveElValorAbsolutoDelOtro(int primero, int segundo, long esperado)
     {
-        Assert.Equal(esperado, Ejercicio3Algorithm.Calcular(primero, segundo));
+        Assert.Equal(esperado, MaximoComunDivisorAlgorithm.Calcular(primero, segundo));
     }
 
     [Fact]
     public void AmbosNumerosCero_ProduceUnErrorComprensible()
     {
-        var error = Assert.Throws<ArgumentException>(() => Ejercicio3Algorithm.Calcular(0, 0));
+        var error = Assert.Throws<ArgumentException>(() => MaximoComunDivisorAlgorithm.Calcular(0, 0));
 
         Assert.Contains("no está definido", error.Message);
     }
@@ -38,13 +39,13 @@ public class Ejercicio3Tests
     [Fact]
     public void LimiteMinimoDeEntero_NoSeDesborda()
     {
-        Assert.Equal(2_147_483_648L, Ejercicio3Algorithm.Calcular(int.MinValue, 0));
+        Assert.Equal(2_147_483_648L, MaximoComunDivisorAlgorithm.Calcular(int.MinValue, 0));
     }
 
     [Fact]
     public void ObtenerPasos_ConservaLaSecuenciaRecursivaDeEuclides()
     {
-        var pasos = Ejercicio3Algorithm.ObtenerPasos(48, 18);
+        var pasos = MaximoComunDivisorAlgorithm.ObtenerPasos(48, 18);
 
         Assert.Equal(
             [

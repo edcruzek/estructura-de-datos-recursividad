@@ -237,16 +237,19 @@
 </article>
 
 @code {
+    // El resultado incluye el desglose de piezas y los pasos para la explicación visual.
     private decimal? importeCompra = 73.26m;
     private decimal? cantidadPagada = 100.00m;
     private ResultadoCambio? resultado;
     private string? error;
 
+    // Carga el ejemplo de compra y pago al abrir la página.
     protected override void OnInitialized()
     {
         Calcular();
     }
 
+    // Verifica que estén presentes ambos importes y delega el cálculo al algoritmo.
     private void Calcular()
     {
         error = null;
@@ -266,7 +269,7 @@
 
         try
         {
-            resultado = Ejercicio4Algorithm.CalcularCambio(importeCompra.Value, cantidadPagada.Value);
+            resultado = CambioMonedasAlgorithm.CalcularCambio(importeCompra.Value, cantidadPagada.Value);
         }
         catch (Exception ex)
         {
@@ -274,6 +277,7 @@
         }
     }
 
+    // Reutiliza el cálculo principal para los ejemplos predefinidos.
     private void CargarEjemplo(decimal compra, decimal pago)
     {
         importeCompra = compra;
@@ -281,6 +285,7 @@
         Calcular();
     }
 
+    // Devuelve el formulario y la salida a su estado vacío.
     private void Limpiar()
     {
         importeCompra = null;
@@ -289,6 +294,7 @@
         error = null;
     }
 
+    // Estos dos helpers solo controlan la apariencia de cada denominación.
     private static string ObtenerClaseMoneda(DenominacionMoneda denom)
     {
         if (denom.ValorEnPesos >= 20.00m)

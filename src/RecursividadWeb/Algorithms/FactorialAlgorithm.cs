@@ -5,8 +5,9 @@ namespace RecursividadWeb.Algorithms;
 /// <summary>
 /// Proporciona métodos recursivos para el cálculo del factorial y la inspección de su desarrollo.
 /// </summary>
-public static class Ejercicio1Algorithm
+public static class FactorialAlgorithm
 {
+    /// <summary>Límite de entrada mostrado en la interfaz para mantener legibles los pasos.</summary>
     public const int MaximoNumero = 25;
 
     /// <summary>
@@ -27,6 +28,7 @@ public static class Ejercicio1Algorithm
         return CalcularRecursivo(n);
     }
 
+    /// <summary>Aplica n! = n × (n - 1)! hasta llegar a 0 o 1.</summary>
     private static BigInteger CalcularRecursivo(int n)
     {
         // Caso base: 0! = 1 y 1! = 1
@@ -56,6 +58,7 @@ public static class Ejercicio1Algorithm
         return pasos;
     }
 
+    /// <summary>Registra cada resultado al regresar de las llamadas recursivas.</summary>
     private static BigInteger ConstruirPasos(int n, List<PasoFactorial> pasos)
     {
         if (n <= 1)
@@ -105,4 +108,5 @@ public static class Ejercicio1Algorithm
     }
 }
 
+/// <summary>Una fila del desglose visual del factorial.</summary>
 public sealed record PasoFactorial(int Numero, string Tipo, string Operacion, BigInteger ResultadoParcial);
