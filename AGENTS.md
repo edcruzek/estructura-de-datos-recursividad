@@ -8,20 +8,22 @@ No resuelvas ejercicios que el usuario no haya seleccionado. Si menciona varios,
 
 ## Mapa de trabajo
 
-| Ejercicio | Página que debes reemplazar | Algoritmo que debes crear | Pruebas que debes crear |
-|---|---|---|---|
-| 1 | `src/RecursividadWeb/Pages/Ejercicio1.razor` | `src/RecursividadWeb/Algorithms/Ejercicio1Algorithm.cs` | `tests/RecursividadWeb.Tests/Ejercicio1Tests.cs` |
-| 2 | `src/RecursividadWeb/Pages/Ejercicio2.razor` | `src/RecursividadWeb/Algorithms/Ejercicio2Algorithm.cs` | `tests/RecursividadWeb.Tests/Ejercicio2Tests.cs` |
-| 3 | `src/RecursividadWeb/Pages/Ejercicio3.razor` | `src/RecursividadWeb/Algorithms/Ejercicio3Algorithm.cs` | `tests/RecursividadWeb.Tests/Ejercicio3Tests.cs` |
-| 4 | `src/RecursividadWeb/Pages/Ejercicio4.razor` | `src/RecursividadWeb/Algorithms/Ejercicio4Algorithm.cs` | `tests/RecursividadWeb.Tests/Ejercicio4Tests.cs` |
-| 5 | `src/RecursividadWeb/Pages/Ejercicio5.razor` | `src/RecursividadWeb/Algorithms/Ejercicio5Algorithm.cs` | `tests/RecursividadWeb.Tests/Ejercicio5Tests.cs` |
+| Ejercicio | Tema | Página | Algoritmo | Pruebas |
+|---|---|---|---|---|
+| 1 | Factorial | `src/RecursividadWeb/Pages/Factorial.razor` | `src/RecursividadWeb/Algorithms/FactorialAlgorithm.cs` | `tests/RecursividadWeb.Tests/FactorialTests.cs` |
+| 2 | Fibonacci | `src/RecursividadWeb/Pages/Fibonacci.razor` | `src/RecursividadWeb/Algorithms/FibonacciAlgorithm.cs` | `tests/RecursividadWeb.Tests/FibonacciTests.cs` |
+| 3 | Máximo común divisor | `src/RecursividadWeb/Pages/MaximoComunDivisor.razor` | `src/RecursividadWeb/Algorithms/MaximoComunDivisorAlgorithm.cs` | `tests/RecursividadWeb.Tests/MaximoComunDivisorTests.cs` |
+| 4 | Cambio de monedas | `src/RecursividadWeb/Pages/CambioMonedas.razor` | `src/RecursividadWeb/Algorithms/CambioMonedasAlgorithm.cs` | `tests/RecursividadWeb.Tests/CambioMonedasTests.cs` |
+| 5 | Torres de Hanói | `src/RecursividadWeb/Pages/TorresHanoi.razor` | `src/RecursividadWeb/Algorithms/TorresHanoiAlgorithm.cs` | `tests/RecursividadWeb.Tests/TorresHanoiTests.cs` |
+
+Los nombres de archivo indican el tema; los números siguen identificando el enunciado en `docs/EJERCICIOS.md` y la ruta pública `/ejercicio-N`. Los estilos específicos usan el mismo nombre que su página con sufijo `.razor.css`. Consulta `docs/GUIA_CODIGO.md` para orientarte en el código ya implementado.
 
 ## Flujo obligatorio
 
 1. Comprueba que estás en una rama distinta de `main`. Si estás en `main`, crea `ejercicio-N-descripcion`; para varios usa `ejercicios-N-M`.
 2. Lee el requisito completo en `docs/EJERCICIOS.md`.
-3. Implementa el algoritmo en la clase C# indicada, separado de la interfaz.
-4. Sustituye la página pendiente por una interfaz funcional, responsiva y en español.
+3. Implementa o ajusta el algoritmo en la clase C# indicada, separado de la interfaz.
+4. Implementa o ajusta la página con una interfaz funcional, responsiva y en español.
 5. Valida entradas y muestra errores comprensibles.
 6. Conserva la ruta `/ejercicio-N`.
 7. Añade pruebas de casos base, normales y límites razonables.

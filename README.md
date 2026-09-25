@@ -11,6 +11,10 @@ Sitio colaborativo en Blazor WebAssembly con un apartado independiente para cada
 
 El agente encontrará el enunciado, los archivos permitidos, las pruebas requeridas y la regla de explicación en `AGENTS.md`.
 
+## Para revisar el código
+
+Los archivos de cada actividad llevan el nombre de su tema (Factorial, Fibonacci, Máximo Común Divisor, Cambio de Monedas y Torres de Hanói). `docs/GUIA_CODIGO.md` relaciona cada número con su página, algoritmo, pruebas y métodos principales. Las rutas públicas `/ejercicio-1` a `/ejercicio-5` no cambian.
+
 ## Desarrollo local
 
 ```powershell

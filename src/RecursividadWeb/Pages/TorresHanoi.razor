@@ -206,6 +206,7 @@
 </article>
 
 @code {
+    // El tablero visual admite menos discos que el algoritmo para que siga siendo legible.
     private const int MaximoDiscosVisual = 8;
     private static readonly string[] NombresTorres = ["Origen", "Auxiliar", "Destino"];
 
@@ -224,8 +225,10 @@
     private MovimientoHanoi? SiguienteMovimiento =>
         movimientos is not null && pasoActual < movimientos.Count ? movimientos[pasoActual] : null;
 
+    // Abre con una solución de tres discos lista para recorrer.
     protected override void OnInitialized() => Resolver();
 
+    // Regenera movimientos y árbol recursivo al cambiar la cantidad de discos.
     private void Resolver()
     {
         DetenerReproduccion();
@@ -246,10 +249,12 @@
             return;
         }
 
-        movimientos = Ejercicio5Algorithm.Resolver(numeroDiscos.Value);
+        movimientos = TorresHanoiAlgorithm.Resolver(numeroDiscos.Value);
         lineasRecursion = ConstruirArbol(numeroDiscos.Value);
     }
 
+    // Reconstruye el tablero aplicando los movimientos desde el inicio hasta pasoActual.
+    // Así, avanzar, retroceder y saltar al final comparten la misma fuente de verdad.
     private Dictionary<string, List<int>> ConstruirTorres()
     {
         var torres = NombresTorres.ToDictionary(nombre => nombre, _ => new List<int>());
@@ -275,6 +280,7 @@
         return torres;
     }
 
+    // Resalta las torres involucradas en el movimiento seleccionado.
     private string ClaseTorre(string nombre)
     {
         var clases = "tower";
@@ -283,6 +289,7 @@
         return clases;
     }
 
+    // Ajusta tamaño y color del disco sin intervenir en el algoritmo.
     private string EstiloDisco(int disco)
     {
         var porcentaje = 34 + (disco * 62d / numeroDiscos!.Value);
@@ -292,6 +299,7 @@
 
     private static string LetraTorre(string nombre) => nombre[0].ToString();
 
+    // Los controles de navegación detienen primero la reproducción automática.
     private void IrAlInicio()
     {
         DetenerReproduccion();
@@ -316,6 +324,7 @@
         if (movimientos is not null) pasoActual = movimientos.Count;
     }
 
+    // Recorre la solución con una espera cancelable entre movimientos.
     private async Task AlternarReproduccion()
     {
         if (isReproduciendo)
@@ -357,6 +366,7 @@
         }
     }
 
+    // Cancela la espera activa cuando el usuario pausa, navega o abandona la página.
     private void DetenerReproduccion()
     {
         isReproduciendo = false;
@@ -366,6 +376,7 @@
         fuente?.Dispose();
     }
 
+    // Construye una traza separada para mostrar la jerarquía de llamadas recursivas.
     private static IReadOnlyList<LineaRecursion> ConstruirArbol(int discos)
     {
         var lineas = new List<LineaRecursion>();
@@ -374,6 +385,7 @@
         return lineas;
     }
 
+    // Refleja las mismas tres fases de Hanoi e indenta cada nivel de recursión.
     private static void AgregarLlamada(
         int discos,
         string origen,
@@ -398,10 +410,12 @@
         AgregarLlamada(discos - 1, auxiliar, origen, destino, nivel + 1, lineas, ref numeroMovimiento);
     }
 
+    // Evita que la reproducción siga intentando actualizar un componente destruido.
     public void Dispose()
     {
         DetenerReproduccion();
     }
 
+    // Texto y profundidad de una línea del árbol; Movimiento enlaza la llamada con el tablero.
     private sealed record LineaRecursion(int Nivel, string Texto, int? Movimiento);
 }

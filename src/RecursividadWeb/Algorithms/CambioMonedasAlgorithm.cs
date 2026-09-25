@@ -44,8 +44,9 @@ public sealed record ResultadoCambio(
 /// Resuelve el problema del cambio de monedas utilizando un algoritmo recursivo
 /// que garantiza el mínimo número total de piezas devueltas.
 /// </summary>
-public static class Ejercicio4Algorithm
+public static class CambioMonedasAlgorithm
 {
+    /// <summary>Máximo permitido para compra y pago.</summary>
     public const decimal MaximoMonto = 1_000_000m;
 
     /// <summary>
@@ -115,6 +116,7 @@ public static class Ejercicio4Algorithm
             pasos);
     }
 
+    /// <summary>Comprueba importes positivos, pago suficiente y precisión de centavos.</summary>
     private static void ValidarEntradas(decimal importeCompra, decimal cantidadPagada)
     {
         if (importeCompra <= 0m)
@@ -160,6 +162,7 @@ public static class Ejercicio4Algorithm
         }
     }
 
+    /// <summary>Detecta fracciones menores que un centavo antes de convertir a enteros.</summary>
     private static bool TieneMasDeDosDecimales(decimal valor)
     {
         return decimal.Round(valor, 2) != valor;
@@ -293,5 +296,6 @@ public static class Ejercicio4Algorithm
         ConstruirPasos(centavosDespues, indiceDenominacion + 1, conteoOptimo, nivel + 1, pasos);
     }
 
+    /// <summary>Resultado intermedio memorizado para un monto y una denominación.</summary>
     private sealed record SolucionOptima(int TotalPiezas, int[] ConteoMonedas);
 }

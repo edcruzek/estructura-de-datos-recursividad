@@ -25,9 +25,9 @@
                                  class="form-control"
                                  @bind-Value="numeroIngresado"
                                  min="0"
-                                 max="@Ejercicio1Algorithm.MaximoNumero"
+                                 max="@FactorialAlgorithm.MaximoNumero"
                                  placeholder="Ej. 5" />
-                    <div class="form-text">Valores permitidos: de 0 a @Ejercicio1Algorithm.MaximoNumero.</div>
+                    <div class="form-text">Valores permitidos: de 0 a @FactorialAlgorithm.MaximoNumero.</div>
                 </div>
 
                 <div class="col-sm-6 col-md-3">
@@ -127,7 +127,7 @@
                 <h3>Entrada</h3>
                 <p>
                     Se solicita un número entero no negativo <em>n</em> (<em>n ≥ 0</em>). En esta interfaz se admiten valores
-                    desde 0 hasta @Ejercicio1Algorithm.MaximoNumero para mantener un rendimiento óptimo y visualización precisa.
+                    desde 0 hasta @FactorialAlgorithm.MaximoNumero para mantener un rendimiento óptimo y visualización precisa.
                 </p>
             </div>
             <div>
@@ -167,6 +167,7 @@
 </article>
 
 @code {
+    // La página conserva el valor de entrada y los tres formatos de salida del algoritmo.
     private static readonly int[] EjemplosRapidos = [0, 1, 3, 5, 7, 10];
 
     private int? numeroIngresado = 5;
@@ -175,11 +176,13 @@
     private IReadOnlyList<PasoFactorial> pasosRecursivos = [];
     private string? error;
 
+    // Muestra un ejemplo resuelto al abrir la página.
     protected override void OnInitialized()
     {
         Calcular();
     }
 
+    // Valida la entrada y obtiene resultado, expresión y traza sin duplicar la lógica recursiva.
     private void Calcular()
     {
         error = null;
@@ -199,17 +202,17 @@
             return;
         }
 
-        if (numeroIngresado > Ejercicio1Algorithm.MaximoNumero)
+        if (numeroIngresado > FactorialAlgorithm.MaximoNumero)
         {
-            error = $"Para esta aplicación, el valor máximo admitido es {Ejercicio1Algorithm.MaximoNumero}.";
+            error = $"Para esta aplicación, el valor máximo admitido es {FactorialAlgorithm.MaximoNumero}.";
             return;
         }
 
         try
         {
-            resultado = Ejercicio1Algorithm.Calcular(numeroIngresado.Value);
-            expresionMatematica = Ejercicio1Algorithm.ObtenerExpresionMatematica(numeroIngresado.Value);
-            pasosRecursivos = Ejercicio1Algorithm.ObtenerPasos(numeroIngresado.Value);
+            resultado = FactorialAlgorithm.Calcular(numeroIngresado.Value);
+            expresionMatematica = FactorialAlgorithm.ObtenerExpresionMatematica(numeroIngresado.Value);
+            pasosRecursivos = FactorialAlgorithm.ObtenerPasos(numeroIngresado.Value);
         }
         catch (ArgumentOutOfRangeException ex)
         {
@@ -221,6 +224,7 @@
         }
     }
 
+    // Los botones de ejemplo reutilizan el mismo flujo que el formulario.
     private void CargarEjemplo(int valor)
     {
         numeroIngresado = valor;

@@ -3,10 +3,12 @@ namespace RecursividadWeb.Algorithms;
 /// <summary>
 /// Resuelve las Torres de Hanói mediante el algoritmo recursivo clásico.
 /// </summary>
-public static class Ejercicio5Algorithm
+public static class TorresHanoiAlgorithm
 {
+    /// <summary>Límite de discos para mantener manejable la lista de 2^n - 1 movimientos.</summary>
     public const int MaximoDiscos = 12;
 
+    /// <summary>Genera, en orden, los movimientos para llevar todos los discos de Origen a Destino.</summary>
     public static IReadOnlyList<MovimientoHanoi> Resolver(int numeroDiscos)
     {
         if (numeroDiscos < 1 || numeroDiscos > MaximoDiscos)
@@ -21,6 +23,10 @@ public static class Ejercicio5Algorithm
         return movimientos;
     }
 
+    /// <summary>
+    /// Mueve n - 1 discos al auxiliar, el disco mayor al destino y los n - 1 restantes al destino.
+    /// Con un solo disco, registra el movimiento directamente (caso base).
+    /// </summary>
     private static void MoverTorre(
         int discos,
         string origen,
@@ -50,4 +56,5 @@ public static class Ejercicio5Algorithm
     }
 }
 
+/// <summary>Movimiento numerado de un disco entre dos torres.</summary>
 public sealed record MovimientoHanoi(int Numero, int Disco, string Desde, string Hacia);

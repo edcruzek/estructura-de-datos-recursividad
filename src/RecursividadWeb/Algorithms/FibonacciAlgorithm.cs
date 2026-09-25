@@ -5,8 +5,9 @@ namespace RecursividadWeb.Algorithms;
 /// <summary>
 /// Proporciona métodos recursivos para generar la serie de Fibonacci y calcular sus términos.
 /// </summary>
-public static class Ejercicio2Algorithm
+public static class FibonacciAlgorithm
 {
+    /// <summary>Cantidad máxima de términos que admite la aplicación.</summary>
     public const int MaximoTerminos = 30;
 
     /// <summary>
@@ -28,6 +29,7 @@ public static class Ejercicio2Algorithm
         return CalcularTerminoRecursivo(n);
     }
 
+    /// <summary>Evalúa F(n) mediante sus dos llamadas recursivas y los casos base F(0) y F(1).</summary>
     private static BigInteger CalcularTerminoRecursivo(int n)
     {
         // Casos base: F(0) = 0, F(1) = 1
@@ -58,6 +60,7 @@ public static class Ejercicio2Algorithm
         return serie;
     }
 
+    /// <summary>Agrega un término por llamada hasta alcanzar la cantidad solicitada.</summary>
     private static void GenerarSerieRecursivo(int meta, List<BigInteger> serie)
     {
         // Caso base: se ha alcanzado la cantidad deseada de términos
@@ -102,6 +105,7 @@ public static class Ejercicio2Algorithm
         return lista;
     }
 
+    /// <summary>Construye la misma secuencia junto con la fórmula que explica cada término.</summary>
     private static void GenerarDetalleRecursivo(int meta, List<TerminoFibonacci> lista)
     {
         if (lista.Count >= meta)
@@ -146,6 +150,7 @@ public static class Ejercicio2Algorithm
     }
 }
 
+/// <summary>Dato y explicación de un término para presentarlo en la página.</summary>
 public sealed record TerminoFibonacci(
     int Indice,
     string Etiqueta,
